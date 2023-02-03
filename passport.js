@@ -4,8 +4,9 @@ const passport=require('passport');
 const LocalStrategy= require('passport-local').Strategy;
 
 const JwtStrategy = require('passport-jwt').Strategy;
-const pgp = require('pg-promise')(/* options */)
-const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
+const db=require('./database.js');
+// const pgp = require('pg-promise')(/* options */)
+// const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
 const bcrypt= require('bcrypt');
 // extracts cookie in a custom way.
 //uses that cookie for the session.
@@ -25,6 +26,7 @@ passport.use(new JwtStrategy({
 }, function(payload, done) {
   if(payload){
     console.log('inside jwt strategy');
+    // crud - read 
         db.any('SELECT * FROM users WHERE user_uid = $1',payload.sub)
 
         .then(function(user) {

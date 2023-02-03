@@ -1,12 +1,15 @@
 //to be able to use env file for secrets we need dotenv here.
 require("dotenv").config();
-const express= require("express");
 
-const app= express();
+const express = require("express");
+require('./passport');
+const app = express();
 
 const bodyParser = require('body-parser');
 
-const pg= require('pg');
+const pg = require('pg');
+
+const fetch = require('node-fetch');
 
 const passport = require('passport');
 
@@ -25,125 +28,273 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(express.json());
 
-const uid=require('uuid');
+const uid = require('uuid');
 
 // app.use(express.static(path.join(__dirname, 'public')));
-console.log('uid:',uid.v4());
 
-const JWT=require('jsonwebtoken');
-app.use(bodyParser.urlencoded({ extended: false }));
+const JWT = require('jsonwebtoken');
+//telling our server that we want to be able to access forms in html pages inside our request.
+//express.urlencoded() is a method inbuilt in express to recognize the incoming Request Object as strings or arrays.
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-require('./passport');
+const port = 3100;
+const db = require('./database.js');
+// const pgp = require('pg-promise')(/* options */)
+// const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
+const accountSid ='ACe52b7151605f56e3e1f8ed39a9a9ccf7';
+const authToken ='8aca2c48d2fff181f36589f3ae450fa2';
+const client = require('twilio')(accountSid, authToken);
 
-const port= 3100;
-
-const pgp = require('pg-promise')(/* options */)
-const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
-
-
-const signToken= (userID)=>{
+const signToken = (userID) => {
   return JWT.sign({
     iss: process.env.SECRET_KEY,
     sub: userID
-  },process.env.SECRET_KEY, { expiresIn: '24h' })
+    //removing expiresIn: '24h' from {} so the token does not expire.
+  }, process.env.SECRET_KEY, {})
 };
 
-// app.get("/",(req,res)=>{
-// //homepage where we can register or login
-// });
-app.get("/", function (req, res) {
-res.render('index')
+let authenticated = false;
+
+
+
+app.get("/", function(req, res) {
+
+  console.log('/ authenticated:', authenticated);
+  if (authenticated) {
+    res.render('index', {
+      message: true,
+      tags: 'authenticated'
+    })
+  } else {
+    res.render('index', {
+      message: false,
+      tags: 'Unauthenticated'
+    })
+  }
 });
 
+app.get('/register-page', function(req, res) {
 
+  if (authenticated) {
+    res.render('register', {
+      message: true,
+      tags: 'authenticated'
+    })
+  } else {
+    res.render('register', {
+      message: false,
+      tags: 'Unauthenticated'
+    })
+  }
+})
 
-app.post("/register",(req,res)=>{
-  let {userNameReg,passwordReg}=req.body;
+app.get('/login-page', function(req, res) {
 
-  // db.none('INSERT INTO users VALUES($1,$2,$3,$4,$5)',[uid.v4(),passwordReg,'','',userNameReg])
-  // .then((data)=>{
-  //   res.status(200).redirect('/');
-  //   console.log('data:',data);
-  // })
-  // .catch((err)=>{
-  //   console.log('err:',err);
-  // });
+  if (authenticated) {
+    res.render('login', {
+      message: true,
+      tags: 'authenticated'
+    })
+  } else {
+    res.render('login', {
+      message: false,
+      tags: 'Unauthenticated'
+    })
+  }
+})
 
+app.post("/register", (req, res) => {
+  let {userNameReg, passwordReg} = req.body;
   //CREATE STEPS TO CREATE NEW USER
   //we need to check if that user already exists.
   //if the user already exists send a message it already exists.
   //If the user doesnt exist then create a new user
 
-//*******WE NEED A CHECK TO SEE IF USERNAME IS ALREADY TAKEN!!!!
-console.log('userNameReg:',userNameReg);
+  //*******WE NEED A CHECK TO SEE IF USERNAME IS ALREADY TAKEN!!!!
 
-db.none('SELECT username FROM users WHERE username = $1', userNameReg)
-.then((data)=>{
-  console.log('no username found:create one');
-  bcrypt.hash(passwordReg, 10)
-  .then(function(hash){
-    passwordReg=hash;
-    db.none('INSERT INTO users VALUES($1,$2,$3,$4,$5)',[uid.v4(),passwordReg,'','',userNameReg])
-    .then((data)=>{
-      res.status(200).redirect('/');
-      console.log('data:',data);
-    })
-    .catch((err)=>{
-      console.log('err:',err);
+  db.none('SELECT username FROM users WHERE username = $1', userNameReg).then((data) => {
+    ///bcrypt
+    bcrypt.hash(passwordReg, 10).then(function(hash) {
+      passwordReg = hash;
+      ///INSERTING TO POSTGRESQL AFTER HASHING
+      //crud - create
+      db.none('INSERT INTO users VALUES($1,$2,$3,$4,$5)', [uid.v4(), passwordReg, '', '', userNameReg]).then((x) => {
+        res.status(200).redirect('/');
+      }).catch(err => {
+        console.log('something went wront with inserting user values');
+      })
+      //ENDING INSERTING TO POSTGRESQL AFTER HASHING
+    }).catch((err) => {
+      console.log('err:', err);
     });
+    ///END bcrypt
+  }).catch((err) => {
+    //SEND BACK JSON THAT USERNAME IS ALREADY TAKEN
+    console.log('data is true : reject');
   })
-  .catch((err)=>{
-    console.log(err);
-  })
-})
-
-.catch((err)=>{
-  //SEND BACK JSON THAT USERNAME IS ALREADY TAKEN
-  console.log('data is true : reject');
-})
-
+  // END DATABASE CHECK FOR USERNAME
 });
+//END REGISTER ROUTE
 
 // I NEED TO BE ABLE TO CHECK PASSWORD AND HASH/SALT FROM DATABASE
 // SEE IF I CAN RETRIEVE USER PASSWORD HERE.
-app.post("/login",passport.authenticate('local',{failureRedirect:'/',failureMessage: true, session:false}),(req,res)=>{
+app.post("/login", passport.authenticate('local', {
+  failureRedirect: '/',
+  failureMessage: true,
+  session: false
+}), (req, res) => {
+  console.log('/login authenticated?', req.isAuthenticated());
+  const {password, user_uid} = req.user[0];
 
-  const {password,user_uid}=req.user[0];
+  if (req.isAuthenticated()) {
+    // let phoneChange=req.user[0].phone.getNumber();
+    // console.log('phoneChange:',phoneChange);
+    console.log('phone from /login:',req.user[0].phone);
 
-  if(req.isAuthenticated()){
+    authenticated = true;
+    let token = signToken(user_uid);
+    res.cookie('access_token', token, {
+      httpOnly: true,
+      sameSite: true
+    });
 
-    console.log('user_uid:',user_uid);
-    console.log('inside is authenticated');
-    let token=signToken(user_uid);
-    res.cookie('access_token',token,{httpOnly:true,sameSite:true});
-
-      console.log('successfully logged in');
-      res.redirect('/profile');
-}
+    res.redirect('/setup');
+  }
 
 });
 
-app.get("/logout",passport.authenticate('jwt',{session:false}),(req,res)=>{
-res.clearCookie('access_token');
-res.status(200).redirect('/');
-
-});
-
-
-app.get('/profile',passport.authenticate('jwt',{session:false}),(req,res)=>{
-// so req.user[0] is always going to match the username and password we login with
-//we dont have to loop through the array of req.user.
-
-  res.render('profile',{
-    name: req.user[0].username,
-    phone:req.user[0].phone,
-    habit:req.user[0].habit
+app.get('/setup',passport.authenticate('jwt', {session: false}), (req, res) => {
+  console.log('phone from /setup:',req.user[0].phone);
+  res.render('setup', {
+    message: true,
+    tags: 'authenticated'
   });
+});
+
+
+app.post('/setup-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
+  const {areaCode, phone} = req.body;
+  fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
+    return res.json();
+  }).then((data) => {
+    let retrievedSeconds=data.dt;
+    let timeZone=data.timezone;
+    let cityName = data.name;
+    let sunriseSeconds = data.sys.sunrise;
+    let localSunriseTime=new Date((sunriseSeconds + timeZone) * 1000).toLocaleTimeString();
+    let minus30Minutes=new Date((sunriseSeconds + timeZone - 1800) * 1000).toLocaleTimeString();
+
+
+//crud - update
+    db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
+      areaCode, phone, req.user[0].user_uid,cityName,localSunriseTime
+    ]).then((d) => {
+      timeInterval(phone,areaCode,localSunriseTime,minus30Minutes);
+      res.redirect('/profile');
+
+    }).catch((err) => {
+      console.log(err);
+    });
+    /// END DB QUERY
+
+  }).catch((err) => console.log(err));
+
+})
+
+app.get("/logout", passport.authenticate('jwt', {session: false}), (req, res) => {
+  res.clearCookie('access_token');
+  authenticated = false;
+  res.status(200).redirect('/');
+});
+
+
+app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) => {
+  console.log('phone from /profile:',req.user[0].phone);
+
+  if (req.user[0].phone != '' && req.user[0].areaCode != '') {
+    res.render('profile', {
+      name: req.user[0].username,
+      phone: req.user[0].phone,
+      areaCode: req.user[0].areacode,
+      sunriseMessage: `The sun will rise at ${req.user[0].time} in ${req.user[0].city}`,
+      message: true,
+      tags: 'authenticated'
+    });
+  } else {
+    res.render('profile', {
+      name: req.user[0].username,
+      phone: req.user[0].phone,
+      areaCode: req.user[0].areacode,
+      sunriseMessage: '<a href="/setup">Set up your phone number and area code</a>',
+      message: true,
+      tags: 'authenticated'
+    });
+  }
 
 });
 
 
-app.listen(port,(res,req)=>{
+app.post('/clear-phone',passport.authenticate('jwt', {session: false}), (req, res)=>{
+  // db.any("UPDATE users SET phone=$1 WHERE username=$2",['',req.user[0].username])
+  // .then((data)=>{
+  //   console.log('CLEARED NUMBER --> CHECK POSTGRESQL');
+  //   res.redirect('/profile');
+  // })
+  // .catch((err)=>{
+  //   console.log(err);
+  // })
+clearInterval(timerInterval);
+console.log('CLEARINTERVAL SHOULD HAVE CLEARED');
+res.redirect('/profile');
+});
+
+app.use(passport.initialize());
+
+//use zip code for api to get dt. get time of 30 min before'
+let catcher;
+let catcherMinus30;
+
+function time(phone,areaCode,localSunriseTime,timeZone){ //runs every second.
+
+let date= new Date();
+let nodeTime=
+
+  if(nodeTime == minus30){
+    console.log(`api was called again at ${minus30}`);
+    //make api call and set new values to sunriseRegular
+    fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
+      return res.json();
+    }).then((data) => {
+
+      let dt3 = data.sys.sunrise;
+      let date3 = new Date(dt3 * 1000);
+      catcher = date3.toLocaleTimeString();
+
+    })
+    .catch(err=>console.log(err));
+  }
+console.log(`catcher:${catcher} after nodetime==minuse30 statement at phone:${phone}`)
+  if(nodeTime==catcher){
+
+    client.messages
+      .create({
+         body: 'Testing from rickys project app. The sun is out! go get some light',
+         from: '+15626008651',
+         to: phone
+       })
+      .then(message =>{
+         console.log(`message sent to ${phone}. its ${catcher}!!`);
+       });
+  }
+  console.log(`catcherMinus30:${catcherMinus30} according to phone:${phone}`)
+};
+
+let timerInterval;
+function timeInterval(phone,areaCode,localSunriseTime,timeZone){
+    timerInterval= setInterval(function(){time(phone,areaCode,localSunriseTime,timeZone)},1000);
+};
+
+app.listen(port, (res, req) => {
   console.log(`app.js is running on port ${port}`);
 });

@@ -1,0 +1,23 @@
+<%- include('./partials/header'); %>
+
+<%# REGISTER %>
+
+<form action="/register" method="post">
+  <h2>Register!</h2>
+  <div>
+    <label for="userNameReg">username:</label>
+    <input name='userNameReg' required>
+  </div>
+  <section>
+    <label for="passwordReg">password:</label>
+    <input name='passwordReg' required>
+  </section>
+<input type="submit" value="Submit">
+</form>
+
+<footer >
+  <%- include('./partials/footer'); %>
+</footer>
+
+  </body>
+  </html>

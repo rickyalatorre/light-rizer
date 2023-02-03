@@ -6,6 +6,11 @@
 
    <!-- CSS link (loading Semantic UI from a CDN) -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+      />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
    <style>
      body { padding:50px; }
    </style>
@@ -14,13 +19,19 @@
 
 <body class="container">
 
-<div class="">
-  <a href="/">home</a>
-</div>
-
-<div class="">
-  <a href="/profile">profile</a>
-</div>
-
-
-<button class="logout-button"><a href="/logout">logout</a></button>
+  <% if(message){%>
+  <p>
+    <%=tags%>
+  </p>
+  <a href="/">home</a> <br>
+    <a href="/profile">profile</a> <br>
+    <a href="/setup">setup</a>
+  <a href="/logout">log out</a>
+  <%}else if(!message){%>
+    <p>
+      <%=tags%>
+    </p>
+    <a href="/">home</a> <br>
+      <a href="/register-page">register</a> <br>
+      <a href="/login-page">log in</a> <br>
+    <%}%>
