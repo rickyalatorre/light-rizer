@@ -1,10 +1,10 @@
 <%- include('./partials/header'); %>
 <h1>we are in setup page</h1>
-<form class="" onsubmit="process(event)" action="/setup-submit" method="post">
+<form class="" action="/setup-submit" method="post">
   <label for="areaCode">Area Code:</label>
   <input type="tel" name="areaCode" value="" pattern="[0-9]{5}" required> <br>
   <label for="areaCode">Phone Number:</label>
-  <input id="phone" type="tel" name="phone" value="" required> <br>
+  <input id="phone" type="tel" name="phone" pattern="[0-9]{10}" value="" required> <br>
   <input class='client-timezone' name='location' type="text" value="" hidden>
   <input type="submit" name="" value="submit">
 </form>

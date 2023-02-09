@@ -42,8 +42,8 @@ const port = 3100;
 const db = require('./database.js');
 // const pgp = require('pg-promise')(/* options */)
 // const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
-const accountSid ='ACe52b7151605f56e3e1f8ed39a9a9ccf7';
-const authToken ='3e767c250961bec97cd141671beb6b41';
+const accountSid = process.env.ACCOUNT_SID;
+  const authToken= process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
 const signToken = (userID) => {
@@ -175,13 +175,14 @@ app.get('/setup',passport.authenticate('jwt', {session: false}), (req, res) => {
 
 app.post('/setup-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
   const {areaCode, phone, location} = req.body;
+  let phoneUS= `+1${phone}`;
   console.log('--------------->:',location);
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
     let dataObj={
       areaCode:areaCode,
-      phone:phone,
+      phone:phoneUS,
       location:location,
       retrievedSeconds: data.dt,
       timeZone: data.timezone,
@@ -206,7 +207,7 @@ app.post('/setup-submit', passport.authenticate('jwt', {session: false}),(req, r
 // console.log('from setup-submit:',minus30Minutes);
 //crud - update
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
-      areaCode, phone, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
+      areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
     ]).then((d) => {
       timeInterval(dataObj);
       res.redirect('/profile');
@@ -276,7 +277,7 @@ function time(dataObj){ //runs every second.
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
 console.log(`${dataObj.phone}: `,nodeTime);
 // console.log('minus30:',dataObj.minus30Minutes());
-let timeTester='9:34:30 AM';
+let timeTester='11:08:30 AM';
   if(nodeTime == timeTester){
     console.log(`api was called again at ${timeTester}`);
     //make api call and set new values to sunriseRegular
@@ -287,7 +288,7 @@ let timeTester='9:34:30 AM';
       let dt3 = data.sys.sunrise;
       let date3 = new Date(dt3 * 1000);
       // catcher = date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
-      catcher='9:35:00 AM';
+      catcher='11:09:00 AM';
   console.log('catcher:',catcher);
     })
     .catch(err=>console.log(err));
