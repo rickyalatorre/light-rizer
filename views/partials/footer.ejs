@@ -15,11 +15,15 @@
   });
 
   function process(event) {
-   
    const phoneNumber = phoneInput.getNumber();
    phoneInputField.value=phoneNumber;
    return true;
   }
+//code that sends timeZone to server.
+let city=Intl.DateTimeFormat().resolvedOptions().timeZone;
+let clientZone= document.querySelector('.client-timezone');
+clientZone.value=city;
+
 
 </script>
    </body>

@@ -43,7 +43,7 @@ const db = require('./database.js');
 // const pgp = require('pg-promise')(/* options */)
 // const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
 const accountSid ='ACe52b7151605f56e3e1f8ed39a9a9ccf7';
-const authToken ='8aca2c48d2fff181f36589f3ae450fa2';
+const authToken ='3e767c250961bec97cd141671beb6b41';
 const client = require('twilio')(accountSid, authToken);
 
 const signToken = (userID) => {
@@ -174,23 +174,41 @@ app.get('/setup',passport.authenticate('jwt', {session: false}), (req, res) => {
 
 
 app.post('/setup-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
-  const {areaCode, phone} = req.body;
+  const {areaCode, phone, location} = req.body;
+  console.log('--------------->:',location);
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
-    let retrievedSeconds=data.dt;
-    let timeZone=data.timezone;
-    let cityName = data.name;
-    let sunriseSeconds = data.sys.sunrise;
-    let localSunriseTime=new Date((sunriseSeconds + timeZone) * 1000).toLocaleTimeString();
-    let minus30Minutes=new Date((sunriseSeconds + timeZone - 1800) * 1000).toLocaleTimeString();
-
-
+    let dataObj={
+      areaCode:areaCode,
+      phone:phone,
+      location:location,
+      retrievedSeconds: data.dt,
+      timeZone: data.timezone,
+      cityName:data.name,
+      sunriseSec:data.sys.sunrise,
+      localSunriseTime: function(){return new Date(this.sunriseSec*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
+      minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})}
+    };
+    console.log('localSunriseTime fro setup-sub:',dataObj.localSunriseTime());
+    console.log('minus30 from setup-submit:',dataObj.minus30Minutes());
+//     let retrievedSeconds=data.dt;
+//     let timeZone=data.timezone;
+//     let cityName = data.name;
+//     let sunriseSec = data.sys.sunrise;
+//     let d= new Date(sunriseSec*1000);
+//     let localSunriseTime= d.toLocaleTimeString('en-US',{timeZone:`${location}`});
+// console.log('from setup-submit:',localSunriseTime);
+//
+// let s=new Date((sunriseSec-1800)*1000);
+// let minus30Minutes = s.toLocaleTimeString('en-US',{timeZone:`${location}`});
+//
+// console.log('from setup-submit:',minus30Minutes);
 //crud - update
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
-      areaCode, phone, req.user[0].user_uid,cityName,localSunriseTime
+      areaCode, phone, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
     ]).then((d) => {
-      timeInterval(phone,areaCode,localSunriseTime,minus30Minutes);
+      timeInterval(dataObj);
       res.redirect('/profile');
 
     }).catch((err) => {
@@ -253,46 +271,47 @@ app.use(passport.initialize());
 
 //use zip code for api to get dt. get time of 30 min before'
 let catcher;
-let catcherMinus30;
-
-function time(phone,areaCode,localSunriseTime,timeZone){ //runs every second.
-
-let date= new Date();
-let nodeTime=
-
-  if(nodeTime == minus30){
-    console.log(`api was called again at ${minus30}`);
+function time(dataObj){ //runs every second.
+//get current time and compare with
+let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
+console.log(`${dataObj.phone}: `,nodeTime);
+// console.log('minus30:',dataObj.minus30Minutes());
+let timeTester='9:34:30 AM';
+  if(nodeTime == timeTester){
+    console.log(`api was called again at ${timeTester}`);
     //make api call and set new values to sunriseRegular
-    fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${dataObj.areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
       return res.json();
     }).then((data) => {
 
       let dt3 = data.sys.sunrise;
       let date3 = new Date(dt3 * 1000);
-      catcher = date3.toLocaleTimeString();
-
+      // catcher = date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
+      catcher='9:35:00 AM';
+  console.log('catcher:',catcher);
     })
     .catch(err=>console.log(err));
-  }
-console.log(`catcher:${catcher} after nodetime==minuse30 statement at phone:${phone}`)
+  };
+console.log('catcher here:',catcher);
   if(nodeTime==catcher){
-
+    console.log('-------------->> true that nodeTime && catcher are the same');
     client.messages
       .create({
          body: 'Testing from rickys project app. The sun is out! go get some light',
          from: '+15626008651',
-         to: phone
+         to: dataObj.phone
        })
       .then(message =>{
-         console.log(`message sent to ${phone}. its ${catcher}!!`);
-       });
-  }
-  console.log(`catcherMinus30:${catcherMinus30} according to phone:${phone}`)
+         console.log(`message sent to ${dataObj.phone}. its ${catcher}!!`);
+       })
+       .catch((err)=>console.log('reason we fail sending:',err));
+  };
+
 };
 
 let timerInterval;
-function timeInterval(phone,areaCode,localSunriseTime,timeZone){
-    timerInterval= setInterval(function(){time(phone,areaCode,localSunriseTime,timeZone)},1000);
+function timeInterval(dataObj){
+    timerInterval= setInterval(function(){time(dataObj)},1000);
 };
 
 app.listen(port, (res, req) => {
