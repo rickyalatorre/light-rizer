@@ -2,27 +2,19 @@
 <html lang="en">
 <head>
    <meta charset="UTF-8">
-   <title>One Habit</title>
-   <style>
-     body { padding:50px; }
-   </style>
+   <title>Light-Rizer</title>
 </head>
 
 
 <body class="container">
 
   <% if(message){%>
-  <p>
-    <%=tags%>
-  </p>
+
   <a href="/">home</a> <br>
     <a href="/profile">profile</a> <br>
     <a href="/settings">settings</a>
   <a href="/logout">log out</a>
   <%}else if(!message){%>
-    <p>
-      <%=tags%>
-    </p>
     <a href="/">home</a> <br>
       <a href="/register-page">register</a> <br>
       <a href="/login-page">log in</a> <br>

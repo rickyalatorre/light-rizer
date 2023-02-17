@@ -63,13 +63,11 @@ app.get("/", function(req, res) {
   console.log('/ authenticated:', authenticated);
   if (authenticated) {
     res.render('index', {
-      message: true,
-      tags: 'authenticated'
+      message: true
     })
   } else {
     res.render('index', {
-      message: false,
-      tags: 'Unauthenticated'
+      message: false
     })
   }
 });
@@ -79,15 +77,13 @@ app.get('/register-page', function(req, res) {
   if (authenticated) {
     res.render('register', {
       message: true,
-      tags: 'authenticated',
       taken:''
-    })
+    });
   } else {
     res.render('register', {
       message: false,
-      tags: 'Unauthenticated',
       taken:''
-    })
+    });
   }
 });
 
@@ -95,15 +91,11 @@ app.get('/login-page', function(req, res) {
 
   if (authenticated) {
     res.render('login', {
-      message: true,
-      tags: 'authenticated',
-      check:''
+      message: true
     })
   } else {
     res.render('login', {
-      message: false,
-      tags: 'Unauthenticated',
-      check:''
+      message: false
     })
   }
 })
@@ -137,7 +129,6 @@ app.post("/register", (req, res) => {
 
     res.render('register', {
       message: false,
-      tags: 'unauthenticated',
       taken:'username taken'
     })
 
@@ -168,22 +159,12 @@ app.post("/login",passport.authenticate('local', {
     });
     res.redirect('/settings');
   }
-  // else{
-
-    // res.render('login', {
-    //   message: false,
-    //   tags: '',
-    //   check:'Re-enter username and password!'
-    // });
-  // }
-
 });
 
 app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) => {
   console.log('phone from /settings:',req.user[0].phone);
   res.render('settings', {
-    message: true,
-    tags: 'authenticated'
+    message: true
   });
 });
 
@@ -252,8 +233,7 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
       sunriseMessage: `The sun will rise at ${req.user[0].time} in ${req.user[0].city}`,
-      message: true,
-      tags: 'authenticated'
+      message: true
     });
   } else {
     res.render('profile', {
@@ -261,8 +241,7 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
       sunriseMessage: '<a href="/settings">Set up your phone number and area code</a>',
-      message: true,
-      tags: 'authenticated'
+      message: true
     });
   }
 
@@ -270,14 +249,6 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
 
 
 app.post('/clear-phone',passport.authenticate('jwt', {session: false}), (req, res)=>{
-  // db.any("UPDATE users SET phone=$1 WHERE username=$2",['',req.user[0].username])
-  // .then((data)=>{
-  //   console.log('CLEARED NUMBER --> CHECK POSTGRESQL');
-  //   res.redirect('/profile');
-  // })
-  // .catch((err)=>{
-  //   console.log(err);
-  // })
 clearInterval(timerInterval);
 console.log('CLEARINTERVAL SHOULD HAVE CLEARED');
 res.redirect('/profile');
