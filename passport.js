@@ -26,7 +26,7 @@ passport.use(new JwtStrategy({
 }, function(payload, done) {
   if(payload){
     console.log('inside jwt strategy');
-    // crud - read 
+    // crud - read
         db.any('SELECT * FROM users WHERE user_uid = $1',payload.sub)
 
         .then(function(user) {
@@ -59,7 +59,7 @@ console.log('passwordReg:',password);
   .then(function(user) {
     if(user.length == 0){
       console.log('no user found: !user statement')
-      return done(null, false);
+      return done(null, false,{message:'no user found'});
     }
     console.log('user param:',user);
     let hashed=user[0].password;
@@ -70,7 +70,7 @@ console.log('passwordReg:',password);
       console.log('result:',result);
       if(!result){
         console.log('does not match');
-        return done(null, false);
+        return done(null, false,{message:'password does not match'});
       }
         return done(null, user);
     })
