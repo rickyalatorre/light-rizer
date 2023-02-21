@@ -1,18 +1,56 @@
 
  <footer >
    <div class="ui inverted footer">
-    
+
     </div>
   </footer>
 
-  <script>
-
+<script type='text/javascript'>
 //code that sends timeZone to server.
 let city=Intl.DateTimeFormat().resolvedOptions().timeZone;
 let clientZone= document.querySelector('.client-timezone');
-clientZone.value=city;
+if(clientZone){
+  console.log('clientZone appears')
+  clientZone.value=city;
+}
 
+let hamburger= document.querySelector(".hamburger");
 
+let uL= document.getElementById("target");
+
+let li= document.querySelectorAll("li");
+
+//not clicked
+let lightSwitch=false;
+//detects when hamburger is clicked
+hamburger.addEventListener("click",function(){
+if(!lightSwitch){
+  console.log(li.length);
+  //removes animation that lets us shrink the ul
+  uL.classList.remove("detach");
+  //adds animation for ul to grow
+  uL.classList.add("attach");
+  //animates our hamburger lines to move in a cross
+  hamburger.classList.add('open');
+  //we have clicked our hamburger
+  lightSwitch=true;
+}else{//everything is expanded
+  console.log(li.length);
+  //we remove the ul ability animate growing
+  uL.classList.remove("attach");
+  //we add animation of shrinking
+  uL.classList.add("detach");
+  //remove animation and the lines revert back to original position
+  hamburger.classList.remove('open');
+  lightSwitch=false;
+}
+
+});
 </script>
+
+
+
+
+<script src="https://kit.fontawesome.com/e75f0a9b44.js" crossorigin="anonymous"></script>
    </body>
    </html>

@@ -1,0 +1,139 @@
+
+body {
+  padding: 50px;
+}
+.nav-container{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+ul{
+  display: flex;
+  justify-content: space-evenly;
+  list-style-type: none;
+}
+.nav-link{
+  background-color: white;
+  text-decoration: none;
+  font-size: 40px;
+  color: #3F979B;
+  padding: 0 20px 0 20px;
+
+}
+.brand{
+  font-weight: bold;
+  font-size: 40px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  body{
+    padding:0;
+  }
+  .nav-container{
+    /* background-color: orange; */
+    display:block;
+    position: relative;
+    margin:0;
+    padding:0;
+    width:100%;
+    height:auto;
+    overflow: hidden;
+  }
+  .brand-container{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-content:center;
+  }
+  .hamburger{
+    position: relative;
+    height: 50px;
+    width: 50px;
+    background-color: yellow;
+  }
+ul{
+  display: block;
+  /* background-color: aqua; */
+}
+.nav-link{
+  font-size: 30px;
+}
+li{
+  padding: 5px 0 5px 0;
+}
+  .line{
+    width:25px;
+    height:5px;
+    transition: all 1s ease-in-out;
+  }
+  .hamburger .first{
+  position: absolute;
+  background-color:#ff427f;
+  left:25%;
+  top:33%;
+  transition: all 1s ease-in-out;
+}
+
+.hamburger .second{
+  position:absolute;
+  background-color: #ff427f;
+  left:25%;
+  bottom:33%;
+  transition: all 1s ease-in-out;
+}
+
+.hamburger.open .first{
+  transform: rotate(45deg)translate(4.33px,4.33px) ;
+}
+
+.hamburger.open .second{
+  transform: rotate(-45deg)translate(4.33px,-4.33px);
+}
+#target{
+  height:0;
+  padding:0px;
+  margin:0;
+  overflow: hidden;
+}
+
+.attach {
+  animation-name: grow;
+  animation-duration: 1.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes grow {
+  from {
+    height: 0;
+  }
+  to {
+    height: 225px;
+  }
+}
+
+.detach {
+  animation: shrink;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+@keyframes shrink {
+  from {
+    height: 225px;
+  }
+  to {
+    height: 0;
+  }
+}
+}
+  /* Small devices (portrait tablets and large phones, 600px and up) */
+/* @media only screen and (min-width: 600px) {...} */
+
+/* Medium devices (landscape tablets, 768px and up) */
+/* @media only screen and (min-width: 768px) {...} */
+
+/* Large devices (laptops/desktops, 992px and up) */
+/* @media only screen and (min-width: 992px) {...} */
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+/* @media only screen and (min-width: 1200px) {...} */

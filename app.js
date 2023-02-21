@@ -22,7 +22,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 const path = require('path');
-app.set("views", path.join(__dirname, "views"));
+// app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(cookieParser());
@@ -30,7 +30,7 @@ app.use(express.json());
 
 const uid = require('uuid');
 
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
@@ -55,7 +55,7 @@ const signToken = (userID) => {
 };
 
 let authenticated = false;
-
+let user;
 
 
 app.get("/", function(req, res) {
@@ -63,11 +63,13 @@ app.get("/", function(req, res) {
   console.log('/ authenticated:', authenticated);
   if (authenticated) {
     res.render('index', {
-      message: true
+      message: true,
+      username:user
     })
   } else {
     res.render('index', {
-      message: false
+      message: false,
+      username:''
     })
   }
 });
@@ -77,12 +79,14 @@ app.get('/register-page', function(req, res) {
   if (authenticated) {
     res.render('register', {
       message: true,
-      taken:''
+      taken:'',
+      username:''
     });
   } else {
     res.render('register', {
       message: false,
-      taken:''
+      taken:'',
+      username:''
     });
   }
 });
@@ -91,11 +95,13 @@ app.get('/login-page', function(req, res) {
 
   if (authenticated) {
     res.render('login', {
-      message: true
+      message: true,
+      username:''
     })
   } else {
     res.render('login', {
-      message: false
+      message: false,
+      username:''
     })
   }
 })
@@ -129,7 +135,8 @@ app.post("/register", (req, res) => {
 
     res.render('register', {
       message: false,
-      taken:'username taken'
+      taken:'username taken',
+      username:''
     })
 
   })// END DATABASE CHECK FOR USERNAME
@@ -152,6 +159,7 @@ app.post("/login",passport.authenticate('local', {
     console.log('phone from /login:',req.user[0].phone);
 
     authenticated = true;
+    user=req.user[0].username;
     let token = signToken(user_uid);
     res.cookie('access_token', token, {
       httpOnly: true,
@@ -164,7 +172,8 @@ app.post("/login",passport.authenticate('local', {
 app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) => {
   console.log('phone from /settings:',req.user[0].phone);
   res.render('settings', {
-    message: true
+    message: true,
+    username:user
   });
 });
 
@@ -233,7 +242,8 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
       sunriseMessage: `The sun will rise at ${req.user[0].time} in ${req.user[0].city}`,
-      message: true
+      message: true,
+      username:user
     });
   } else {
     res.render('profile', {
@@ -241,7 +251,8 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
       sunriseMessage: '<a href="/settings">Set up your phone number and area code</a>',
-      message: true
+      message: true,
+      username:user
     });
   }
 
