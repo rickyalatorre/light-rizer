@@ -26,22 +26,43 @@ let lightSwitch=false;
 hamburger.addEventListener("click",function(){
 if(!lightSwitch){
   console.log(li.length);
-  //removes animation that lets us shrink the ul
-  uL.classList.remove("detach");
-  //adds animation for ul to grow
-  uL.classList.add("attach");
-  //animates our hamburger lines to move in a cross
-  hamburger.classList.add('open');
-  //we have clicked our hamburger
+  if(li.length==5){
+    //removes animation that lets us shrink the ul
+    uL.classList.remove("detach");
+    //adds animation for ul to grow
+    uL.classList.add("attach");
+    //animates our hamburger lines to move in a cross
+    hamburger.classList.add('open');
+    //we have clicked our hamburger
+  }else{//if we havent logged in yet our li length is shorter so we make animation size shorter
+    //removes animation that lets us shrink the ul
+    uL.classList.remove("detach2");
+    //adds animation for ul to grow
+    uL.classList.add("attach2");
+    //animates our hamburger lines to move in a cross
+    hamburger.classList.add('open');
+    //we have clicked our hamburge
+  }
   lightSwitch=true;
+
 }else{//everything is expanded
   console.log(li.length);
-  //we remove the ul ability animate growing
-  uL.classList.remove("attach");
-  //we add animation of shrinking
-  uL.classList.add("detach");
-  //remove animation and the lines revert back to original position
-  hamburger.classList.remove('open');
+  if(li.length==5){
+    //we remove the ul ability animate growing
+    uL.classList.remove("attach");
+    //we add animation of shrinking
+    uL.classList.add("detach");
+    //remove animation and the lines revert back to original position
+    hamburger.classList.remove('open');
+  }else{//if we havent logged in yet our li length is shorter so we make animation size shorter
+    //we remove the ul ability animate growing
+    uL.classList.remove("attach2");
+    //we add animation of shrinking
+    uL.classList.add("detach2");
+    //remove animation and the lines revert back to original position
+    hamburger.classList.remove('open');
+  }
+
   lightSwitch=false;
 }
 
