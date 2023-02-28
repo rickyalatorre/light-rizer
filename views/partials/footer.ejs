@@ -1,11 +1,19 @@
 
  <footer >
    <div class="ui inverted footer">
-
     </div>
+    <a href="https://www.flaticon.com/free-animated-icons/sun" title="sun animated icons">Sun animated icons created by Freepik - Flaticon</a>
   </footer>
 
+  <script src="https://unpkg.com/scrollreveal"></script>
+
 <script type='text/javascript'>
+var slideUp = {
+    distance: '50%',
+    easing:'ease-in',
+    origin:'left'
+};
+ScrollReveal().reveal('.home-ul',slideUp);
 //code that sends timeZone to server.
 let city=Intl.DateTimeFormat().resolvedOptions().timeZone;
 let clientZone= document.querySelector('.client-timezone');
@@ -18,7 +26,7 @@ let hamburger= document.querySelector(".hamburger");
 
 let uL= document.getElementById("target");
 
-let li= document.querySelectorAll("li");
+let li= document.querySelectorAll(".nav-link");
 
 //not clicked
 let lightSwitch=false;
@@ -26,6 +34,7 @@ let lightSwitch=false;
 hamburger.addEventListener("click",function(){
 if(!lightSwitch){
   console.log(li.length);
+  console.log(li);
   if(li.length==5){
     //removes animation that lets us shrink the ul
     uL.classList.remove("detach");
@@ -47,6 +56,7 @@ if(!lightSwitch){
 
 }else{//everything is expanded
   console.log(li.length);
+  console.log(li);
   if(li.length==5){
     //we remove the ul ability animate growing
     uL.classList.remove("attach");
@@ -69,8 +79,7 @@ if(!lightSwitch){
 });
 </script>
 
-
-
+<%# <script type="text/javascript" src="scroll-anim.js"></script> %>
 
 <script src="https://kit.fontawesome.com/e75f0a9b44.js" crossorigin="anonymous"></script>
    </body>
