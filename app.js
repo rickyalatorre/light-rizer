@@ -135,7 +135,7 @@ app.post("/register", (req, res) => {
 
     res.render('register', {
       message: false,
-      taken:'username taken',
+      taken:'<h3 class="reg-taken">Username taken. Please try again</h3>',
       username:''
     })
 

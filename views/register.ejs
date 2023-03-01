@@ -1,27 +1,23 @@
 <%- include('./partials/header'); %>
 
 <%# REGISTER %>
-
-<form action="/register" method="post">
-  <h2>Register!</h2>
-  <div>
-    <label for="userNameReg">username:</label>
-    <input name='userNameReg' required>
+<section class='register-section'>
+  <img class='register-img'src="/images/flow1.png" alt="flowing arrows">
+<form class='reg-form-container' action="/register" method="post">
+  <h1>Register!</h1>
+  <div class='regin-container'>
+      <label class='reg-label' for="userNameReg">username</label>
+      <input class='register-input' name='userNameReg' required>
   </div>
-  <section>
-    <label for="passwordReg">password:</label>
-    <input name='passwordReg' required>
-  </section>
-<input type="submit" value="Submit">
+  <div class='regin-container'>
+      <label class='reg-label' for="passwordReg">password</label>
+      <input class='register-input' name='passwordReg' required>
+  </div>
+<input class='reg-submit' type="submit" value="Submit">
+<%# <h3 class='reg-taken'> %>
+  <%-taken%>
+<%# </h3> %>
 </form>
 
-<h3>
-  <%=taken%>
-</h3>
-
-<footer >
+</section>
   <%- include('./partials/footer'); %>
-</footer>
-
-  </body>
-  </html>
