@@ -1,18 +1,20 @@
 <%- include('./partials/header'); %>
 <%# LOGIN %>
-<form action="/login" method="post">
-  <h2>Login!</h2>
-  <div>
-    <label for="username">username:</label>
-    <input name='username' required/>
+<section class='register-section'>
+<form class='reg-form-container' action="/login" method="post">
+  <h1>Login!</h1>
+  <div class='regin-container'>
+    <label class='reg-label' for="username">username:</label>
+    <input class='register-input' name='username' required/>
   </div>
-  <section>
-    <label for="password">password:</label>
-    <input name='password' required/>
-  </section>
-  <input type="submit" value="Submit">
+  <div class='regin-container'>
+    <label class='reg-label' for="password">password:</label>
+    <input class='register-input' name='password' required/>
+  </div>
+  <input class='reg-submit' type="submit" value="Submit">
 </form>
-
+<img class='login-img'src="/images/eye-scan.gif" alt="flowing arrows">
+</section>
 
 
   <%- include('./partials/footer'); %>
