@@ -24,9 +24,13 @@
     </p>
     <p class='home-p center' style='color:#205E61;'>Get text message as a daily reminder!</p>
     <p class='home-p center' style='color:#205E61;'>All you need is your phone number and zip code.</p>
+
+<%if(!message){%>
     <div class='ha-container'>
       <a class='home-a' href="/register-page">Register</a>
       <a class='home-a' href="/login-page">Login</a>
     </div>
+<%}%>
+
   </section>
 <%- include('./partials/footer'); %>

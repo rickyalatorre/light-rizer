@@ -1,14 +1,36 @@
 <%- include('./partials/header'); %>
-<h1>we are in setup page</h1>
-<form class="" action="/settings-submit" method="post">
-  <label for="areaCode">Area Code:</label>
-  <input type="tel" name="areaCode" value="" pattern="[0-9]{5}" required> <br>
-  <label for="areaCode">Phone Number:</label>
-  <input id="phone" type="tel" name="phone" pattern="[0-9]{10}" value="" required> <br>
-  <input class='client-timezone' name='location' type="text" value="" hidden>
-  <input type="submit" name="" value="submit">
-</form>
+
+<section class='register-section'>
+  <%# <img class='login-img' src="https://i.pinimg.com/originals/91/e7/2f/91e72f56e9dab16bd62a21a7c6b01d84.png" alt=""> %>
+<div class='register-img  bubble-space' style='opacity:1;'>
+  <div class='bubble bubble-bottom-right'>
+    <p class="settings-p">The sun is rising! Go get some sun! :)</p>
+  </div>
+</div>
+  <form class='reg-form-container' action="/settings-submit" method="post">
+    <div class='regin-container'>
+      <label class='reg-label' for="areaCode">Zip Code</label>
+      <input class='register-input' type="tel" name="areaCode" value="" pattern="[0-9]{5}" placeholder="i.e 90001" required>
+    </div>
+    <div class='regin-container'>
+      <label class='reg-label' for="areaCode">Phone Number</label>
+      <%# <input class='register-input' id="phone" type="tel" name="phone" pattern="[0-9]{10}" value="" placeholder="xxx-xxx-xxxx" required> %>
+<div class="phone-inputs-holder">
+  <span class="span-settings">(</span>
+  <input class='phoneInput phoneMiddleNumbers'  type="tel" maxlength="3" name="phoneAreaCode" pattern="[0-9]{3}" value="" placeholder="xxx" required>
+  <span class="span-settings">)</span>
+  <input class='phoneInput phoneMiddleNumbers'  type="tel" maxlength="3" name="phoneMiddleNumbers" pattern="[0-9]{3}" value="" placeholder="xxx" required>
+  <span class="span-settings">-</span>
+  <input  class='phoneInput phoneLastNumbers' type="tel" maxlength="4" name="phoneLastNumbers" pattern="[0-9]{4}" value="" placeholder="xxxx" required>
+</div>
+
+    </div>
+    <input class='client-timezone' name='location' type="text" value="" hidden>
+    <input class='reg-submit' type="submit" name="" value="submit">
+  </form>
+</section>
+
 <form action="/clear-phone" method="post">
-  <input type='submit' value="stop messages" />
+  <input class='reg-submit' type='submit' value="stop messages" />
 </form>
 <%- include('./partials/footer'); %>

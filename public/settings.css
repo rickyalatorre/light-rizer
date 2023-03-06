@@ -1,0 +1,125 @@
+ /* .settings-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+  width: 600px;
+  height: inherit;
+} */
+.phoneInput{
+  height:30px;
+  font-size: 20px;
+  border:none;
+  /* background-color: #8BF5FA; */
+  text-align: center;
+  /* border-bottom: 2px solid black; */
+}
+.phoneInput:focus{
+  outline: none;
+}
+.phoneMiddleNumbers{
+  width:50px;
+}
+.phoneLastNumbers{
+  width:60px;
+}
+.bubble {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #8BF5FA;
+  border-radius: 40px;
+  position: relative;
+  width: 300px;
+  height: 200px;
+  margin: auto;
+}
+
+.bubble-bottom-right::before {
+  content: "";
+  position: absolute;
+  right: 30px;
+  bottom: -45px;
+  border-top: 35px solid #8BF5FA;
+  border-left: 35px solid transparent;
+  border-bottom: 35px solid transparent;
+  border-right: 35px solid #8BF5FA;
+}
+
+.settings-p {
+  padding: 20px;
+  color: #205E61;
+  font-size: 25px;
+  font-weight: bold;
+}
+.span-settings{
+
+  font-size: 30px;
+  /* font-weight: bold; */
+}
+@media only screen and (max-width: 600px) {
+  .settings-img {
+    width: 100%;
+  }
+  .bubble-space{
+    padding-bottom: 30px;
+  }
+
+  .phoneMiddleNumbers{
+    /* width:35px; */
+    width:25%;
+  }
+  .phoneLastNumbers{
+    /* width:40px; */
+    width:25%
+  }
+  .phone-inputs-holder{
+    display: flex;
+    /* justify-content: space-around; */
+    width:100%;
+  }
+  .phone-input{
+    font-size: 15px;
+  }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+  @media only screen and (min-width: 600px) {
+  .phoneMiddleNumbers{
+    width:35px;
+    width:20%;
+  }
+  .phoneLastNumbers{
+    width:25%
+  }
+  .phone-inputs-holder{
+    display: flex;
+    width:100%;
+  }
+   .phone-input{
+    font-size: 15px;
+  }
+ }
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .phoneMiddleNumbers{
+    width:25%;
+  }
+  .phoneLastNumbers{
+    width:30%
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+/* @media only screen and (min-width: 992px) {...} */
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .phoneMiddleNumbers{
+    width:15%;
+  }
+  .phoneLastNumbers{
+    width:20%
+  }
+}

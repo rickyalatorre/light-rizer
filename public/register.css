@@ -10,6 +10,7 @@ h1{
 .register-section{
   display: flex;
   flex-wrap: wrap;
+  padding-top:40px;
 }
 
 .reg-form-container{

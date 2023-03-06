@@ -57,19 +57,26 @@ const signToken = (userID) => {
 let authenticated = false;
 let user;
 
-
 app.get("/", function(req, res) {
+
+// let registerLoginOption=
+// '<div class="ha-container">
+//     <a class="home-a" href="/register-page">Register</a>
+//     <a class="home-a" href="/login-page">Login</a>
+//   </div>';
 
   console.log('/ authenticated:', authenticated);
   if (authenticated) {
     res.render('index', {
       message: true,
       username:user
+      // display:""
     })
   } else {
     res.render('index', {
       message: false,
       username:''
+      // display: registerLoginOption
     })
   }
 });
@@ -119,8 +126,7 @@ app.post("/register", (req, res) => {
       ///INSERTING TO POSTGRESQL AFTER HASHING
       //crud - create
       db.none('INSERT INTO users VALUES($1,$2,$3,$4,$5)', [uid.v4(), passwordReg, '', '', userNameReg]).then((x) => {
-
-        res.status(200).redirect('/');
+        res.status(200).redirect('/login-page');
       }).catch(err => {
         console.log('something went wront with inserting user values');
       });
@@ -165,7 +171,9 @@ app.post("/login",passport.authenticate('local', {
       httpOnly: true,
       sameSite: true
     });
-    res.redirect('/settings');
+
+      res.redirect('/profile');
+
   }
 });
 
@@ -177,9 +185,12 @@ app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) =
   });
 });
 
-
 app.post('/settings-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
-  const {areaCode, phone, location} = req.body;
+  const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
+
+  let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
+  console.log('phone-->',phone);
+
   let phoneUS= `+1${phone}`;
   console.log('--------------->:',location);
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
