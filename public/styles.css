@@ -1,5 +1,8 @@
 
-
+.section-padding {
+  padding: 50px 50px 0 50px;
+  margin: 0;
+}
 /* NAVIGATION */
 .nav-container{
   display: flex;
@@ -29,7 +32,7 @@
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 835px) {
-  body{
+  .section-padding{
     padding:25px 25px 0 25px;
   }
   /* NAVBAR */
@@ -167,10 +170,10 @@ li{
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 836px) {
-  body {
+  /* body {
     padding: 50px 50px 0 50px;
     margin: 0;
-  }
+  } */
   .nav-link{
     font-size: 25px;
     padding: 0 10px 0 10px;

@@ -1,11 +1,22 @@
- /* .settings-img {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.5;
-  width: 600px;
-  height: inherit;
-} */
+.stopMessages-p{
+  font-size: 20px;
+  padding:15px;
+  margin:0;
+  text-align: center;
+  color:#205E61;
+}
+.stopMessages-submit{
+  display: block;
+  border:0.1px solid #205E61;
+  margin:0 auto;
+  border-radius: 10px;
+  background-color:white;
+  font-size: 30px;
+  color:#205E61;
+}
+.stopMessages{
+  background-color:#F9F54B;
+}
 .phoneInput{
   height:30px;
   font-size: 20px;
