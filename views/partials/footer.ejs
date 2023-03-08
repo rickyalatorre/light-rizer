@@ -87,6 +87,40 @@ if(!lightSwitch){
 });
 </script>
 
+<%# //phone input script  %>
+<script type="text/javascript">
+  let firstInput=document.querySelector('.firstInput');
+  let secondInput=document.querySelector('.secondInput');
+  let thirdInput=document.querySelector('.thirdInput');
+
+//first part of phone number input will listen for typing.
+  firstInput.addEventListener('keydown',function(e){
+    //if input is filled out and the maxLength is surpassed we jump to the next input(no backspaces are pressed);
+    if(e.keyCode!==8&&firstInput.value.length == firstInput.maxLength){
+      console.log('they equal length, so we be able to tab over');
+      secondInput.focus();
+    }
+    })
+    //middle part of phone number input will listen for typing.
+    secondInput.addEventListener('keydown',function(e){
+      //when our input is empty and backspace is pressed we jump back to previous input.
+      if(e.keyCode==8 && secondInput.value==''){
+        firstInput.focus();
+      }
+      //if input is filled out and the maxLength is surpassed we jump to the next input(no backspaces are pressed);
+      if(e.keyCode!==8&&secondInput.value.length == secondInput.maxLength){
+        thirdInput.focus();
+      }
+      })
+      //Last part of phone number input will listen for typing.
+      thirdInput.addEventListener('keydown',function(e){
+        //when our input is empty and backspace is pressed we jump back to previous input.
+        if(e.keyCode==8 && thirdInput.value==''){
+          secondInput.focus();
+        }
+      })
+</script>
+
 <script src="https://kit.fontawesome.com/e75f0a9b44.js" crossorigin="anonymous"></script>
    </body>
    </html>

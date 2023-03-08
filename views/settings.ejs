@@ -14,14 +14,13 @@
     </div>
     <div class='regin-container'>
       <label class='reg-label' for="areaCode">Phone Number</label>
-      <%# <input class='register-input' id="phone" type="tel" name="phone" pattern="[0-9]{10}" value="" placeholder="xxx-xxx-xxxx" required> %>
       <div class="phone-inputs-holder">
         <span class="span-settings">(</span>
-        <input class='phoneInput phoneMiddleNumbers' type="tel" maxlength="3" name="phoneAreaCode" pattern="[0-9]{3}" value="" placeholder="xxx" required>
+        <input class='firstInput phoneInput phoneMiddleNumbers' type="tel" maxlength="3" name="phoneAreaCode" pattern="[0-9]{3}" value="" placeholder="xxx" required>
         <span class="span-settings">)</span>
-        <input class='phoneInput phoneMiddleNumbers' type="tel" maxlength="3" name="phoneMiddleNumbers" pattern="[0-9]{3}" value="" placeholder="xxx" required>
+        <input class='secondInput phoneInput phoneMiddleNumbers' type="tel" maxlength="3" name="phoneMiddleNumbers" pattern="[0-9]{3}" value="" placeholder="xxx" required>
         <span class="span-settings">-</span>
-        <input class='phoneInput phoneLastNumbers' type="tel" maxlength="4" name="phoneLastNumbers" pattern="[0-9]{4}" value="" placeholder="xxxx" required>
+        <input class='thirdInput phoneInput phoneLastNumbers' type="tel" maxlength="4" name="phoneLastNumbers" pattern="[0-9]{4}" value="" placeholder="xxxx" required>
       </div>
     </div>
     <input class='client-timezone' name='location' type="text" value="" hidden>
