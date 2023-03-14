@@ -49,14 +49,17 @@
   justify-content: center;
   gap: 50px;
 }
-.home-a{
+.home-a {
+  text-decoration: none;
+  padding:5px;
+  border:0.1px solid #205E61;
+  border-radius: 10px;
+  background-color:#F9F54B;
   font-size: 30px;
-  color:#F9F54B;
-  -webkit-text-stroke-width: 0.2px;
- -webkit-text-stroke-color: #3F979B;
+  color:#205E61;
 }
 .ha-container a.home-a:hover{
-  color:#205E61;
+background-color:white;
 }
 
 footer{
@@ -178,7 +181,6 @@ padding:20px;
   }
   .home-ul{
     font-size: 60px;
-    padding-top:60px;
   }
   .sun-anim-gif{
     width:500px;

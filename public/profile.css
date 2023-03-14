@@ -1,6 +1,48 @@
-
+.messagesActivated{
+  border-radius: 10px;
+  border: 0.5px solid #205E61;
+  background-color: #F9F54B;
+  width:25%;
+  text-align: center;
+  color:#205E61;
+}
+.profile-info{
+  color:#205E61;
+}
+.moonMsg{
+  display: flex;
+  justify-content:flex-start;
+  align-items: center;
+  gap:20px;
+}
 .sky{
-  background-color: #205E61;
-  width: 100%;
-  height:250px;
+  height:auto;
+  width:100%;
+  background-color: #8BF5FA;
+}
+
+.moon-profile{
+  width:10%;
+  padding:3%;
+}
+.sunriseMessage{
+  color:#205E61;
+  font-size: 40px;
+}
+
+.unbreak{
+  white-space: nowrap;
+}
+.cloud{
+  color:white;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .sunriseMessage{
+    font-size: 20px;
+  }
+  .messagesActivated{
+    width:50%;
+  }
 }

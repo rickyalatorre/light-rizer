@@ -1,15 +1,29 @@
 <%- include('./partials/header'); %>
-<div class='sky'>
-
+<div class='sky day-sky-color'>
+  <div class='moonMsg'>
+    <img class='moon-profile' src="/images/sun.png" alt="moon animation">
+    <h2 class='sunriseMessage'><i class="cloud fa-solid fa-cloud"></i><%-sunriseMessage%><i class=" cloud fa-solid fa-cloud"></i></h2>
+  </div>
+  <svg id="wave" style="display:block;transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 190" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0">
+        <stop stop-color="rgba(32, 94, 97, 1)" offset="0%"></stop>
+        <stop stop-color="rgba(249, 245, 75, 1)" offset="100%"></stop>
+      </linearGradient>
+    </defs>
+    <path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)"
+      d="M0,114L30,123.5C60,133,120,152,180,152C240,152,300,133,360,117.2C420,101,480,89,540,85.5C600,82,660,89,720,76C780,63,840,32,900,31.7C960,32,1020,63,1080,76C1140,89,1200,82,1260,85.5C1320,89,1380,101,1440,91.8C1500,82,1560,51,1620,31.7C1680,13,1740,6,1800,25.3C1860,44,1920,89,1980,91.8C2040,95,2100,57,2160,60.2C2220,63,2280,108,2340,129.8C2400,152,2460,152,2520,142.5C2580,133,2640,114,2700,88.7C2760,63,2820,32,2880,41.2C2940,51,3000,101,3060,126.7C3120,152,3180,152,3240,136.2C3300,120,3360,89,3420,63.3C3480,38,3540,19,3600,34.8C3660,51,3720,101,3780,126.7C3840,152,3900,152,3960,139.3C4020,127,4080,101,4140,82.3C4200,63,4260,51,4290,44.3L4320,38L4320,190L4290,190C4260,190,4200,190,4140,190C4080,190,4020,190,3960,190C3900,190,3840,190,3780,190C3720,190,3660,190,3600,190C3540,190,3480,190,3420,190C3360,190,3300,190,3240,190C3180,190,3120,190,3060,190C3000,190,2940,190,2880,190C2820,190,2760,190,2700,190C2640,190,2580,190,2520,190C2460,190,2400,190,2340,190C2280,190,2220,190,2160,190C2100,190,2040,190,1980,190C1920,190,1860,190,1800,190C1740,190,1680,190,1620,190C1560,190,1500,190,1440,190C1380,190,1320,190,1260,190C1200,190,1140,190,1080,190C1020,190,960,190,900,190C840,190,780,190,720,190C660,190,600,190,540,190C480,190,420,190,360,190C300,190,240,190,180,190C120,190,60,190,30,190L0,190Z">
+    </path>
+  </svg>
 </div>
 <section class='section-padding'>
   <div class="">
-    <h1>you are in your profile</h1>
+    <h1>Profile</h1>
   </div>
+  <h2 class='messagesActivated'><%= messagesActivated%></h2>
+  <h2 class='profile-info'><i class="fa-solid fa-circle-user"></i> <%= name %></h2>
+  <h2 class='profile-info'><i class="fa-solid fa-comment-sms"></i> <%= phone %> <span></span></h2>
+  <h2 class='profile-info'><i class="fa-solid fa-location-dot"></i> <%=areaCode%></h2>
 
-  <h2><%= name %></h2>
-  <h2><%= phone %></h2>
-  <h2><%=areaCode%></h2>
-  <h2><%-sunriseMessage%></h2>
 </section>
 <%- include('./partials/footer'); %>

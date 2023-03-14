@@ -54,16 +54,12 @@ const signToken = (userID) => {
   }, process.env.SECRET_KEY, {})
 };
 
+
 let authenticated = false;
 let user;
+let phoneActivation='Messages Unactivated';
 
 app.get("/", function(req, res) {
-
-// let registerLoginOption=
-// '<div class="ha-container">
-//     <a class="home-a" href="/register-page">Register</a>
-//     <a class="home-a" href="/login-page">Login</a>
-//   </div>';
 
   console.log('/ authenticated:', authenticated);
   if (authenticated) {
@@ -185,10 +181,14 @@ app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) =
   });
 });
 
+//if phone !=='' then have /profile route render activated
 app.post('/settings-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
   const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
 
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
+  if(phone!==''){
+    phoneActivation='Messages Activated';
+  }
   console.log('phone-->',phone);
 
   let phoneUS= `+1${phone}`;
@@ -249,19 +249,21 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
 
   if (req.user[0].phone != '' && req.user[0].areaCode != '') {
     res.render('profile', {
+      messagesActivated:phoneActivation,
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
-      sunriseMessage: `The sun will rise at ${req.user[0].time} in ${req.user[0].city}`,
+      sunriseMessage: `<span>The sun will rise at <span class="unbreak">${req.user[0].time}</span> in <span class="unbreak">${req.user[0].city}</span></span>`,
       message: true,
       username:user
     });
   } else {
     res.render('profile', {
+      messagesActivated:phoneActivation,
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
-      sunriseMessage: '<a href="/settings">Set up your phone number and area code</a>',
+      sunriseMessage: '<a href="/settings">Click here to set up your phone number and zip code</a>',
       message: true,
       username:user
     });
@@ -269,8 +271,9 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
 
 });
 
-
+//unactivated to profile
 app.post('/clear-phone',passport.authenticate('jwt', {session: false}), (req, res)=>{
+  phoneActivation='Messages Unactivated';
 clearInterval(timerInterval);
 console.log('CLEARINTERVAL SHOULD HAVE CLEARED');
 res.redirect('/profile');
