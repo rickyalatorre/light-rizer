@@ -28,15 +28,19 @@ height:inherit;
   padding:10px;
   width:70%;
   margin:0 auto;
+  position:relative;
 }
 .register-input{
+  box-sizing: border-box;
   font-size: 20px;
   color: #205E61;
-  padding-left: 20px;
+  padding-left: 10px;
+  padding-right:30px;
   border: 1px dashed #205E61;
   width: 90%;
   height: 40px;
   border-radius: 10px;
+  position:relative;
 }
 .register-input:focus{
   outline: 2px solid #F9F54B;
@@ -46,6 +50,12 @@ height:inherit;
   margin-bottom: 10px;
   color: #3F979B;
   font-size: 20px;
+  position: relative;
+}
+.eye{
+  position: absolute;
+  right: 12%;
+  top:calc(50% - 8px);
 }
 .reg-submit{
   display: block;
@@ -71,7 +81,9 @@ height:inherit;
   margin: 30px auto 0 auto;
   width:50%;
 }
-
+/* .see-password{
+  width:
+} */
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
   .register-img{

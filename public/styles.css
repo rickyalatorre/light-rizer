@@ -24,10 +24,12 @@
 }
 .brand{
   color: #F9F54B;
-  -webkit-text-stroke-width: 0.5px;
- -webkit-text-stroke-color: black;
   font-weight: bold;
   font-size: 40px;
+  text-decoration: none;
+  -webkit-text-stroke-width: 0.5px;
+ -webkit-text-stroke-color: black;
+
 }
 
 /* Extra small devices (phones, 600px and down) */
@@ -197,6 +199,7 @@ li{
   }
   .brand{
     font-size: 40px;
+    text-decoration:none;
   }
   #target{
     padding:0;

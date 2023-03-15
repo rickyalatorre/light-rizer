@@ -122,6 +122,23 @@ if(!lightSwitch){
         }
       })
 </script>
+<%# script for password viewer %>
+<script type="text/javascript">
+  let eyeIcon=document.querySelector('.eye');
+  let input=document.querySelector('.see-password');
+  eyeIcon.addEventListener('click',function(){
+    if(input.type=='password'){
+      input.type='';
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+    }else{
+      input.type='password';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+    }
 
+  })
+
+</script>
    </body>
    </html>
