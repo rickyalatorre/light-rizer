@@ -1,9 +1,12 @@
-
+body{
+  font-family: 'Varela Round', sans-serif;
+}
 .section-padding {
   padding: 50px 50px 0 50px;
   margin: 0;
 }
 /* NAVIGATION */
+
 .nav-container{
   display: flex;
   justify-content: flex-start;
@@ -23,6 +26,7 @@
 
 }
 .brand{
+  font-family: 'Barlow', sans-serif;
   color: #F9F54B;
   font-weight: bold;
   font-size: 40px;
@@ -64,8 +68,8 @@
   display: block;
 }
 .nav-link{
-  font-size: 30px;
-  padding: 0 20px 0 20px;
+  font-size: 26px;
+  padding: 5px 20px 5px 20px;
 }
 li{
   padding: 5px 0 5px 0;
