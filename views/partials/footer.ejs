@@ -138,6 +138,91 @@ if(!lightSwitch){
     }
 
   })
+</script>
+<%# SLIDE ANIMATION  %>
+<script type="text/javascript">
+let slideNumber = 0;
+
+let testimonyPeople = [
+{
+  testimony: "I built it!",
+  name: "-ricky",
+  image:
+    "https://img.freepik.com/free-photo/indian-man-smiling-cheerful-expression-closeup-portrait_53876-129387.jpg?w=740&t=st=1678986367~exp=1678986967~hmac=bc2c822bf87480dc1782872f1556b41969c60c1707a7f43ecf6b2b6b6e6bb593"
+},
+{
+  testimony: "good job kiki!",
+  name: "-rene",
+  image:
+    "https://img.freepik.com/free-photo/pretty-fat-man-smiles-checking-his-smartphone-while-he-sits-sofa-eats_8353-5517.jpg?w=740&t=st=1678986439~exp=1678987039~hmac=83bf3f736c3e6fd3592057fffda5ac5caaba854d00f4e32ce17ed78340485ce3"
+},
+{
+  testimony: "thats cool...",
+  name: "-lili",
+  image:
+    "https://img.freepik.com/free-photo/size-inclusive-women-fashion-black-tank-top_53876-97037.jpg?w=360&t=st=1678986502~exp=1678987102~hmac=710c8b0fe65d381efca46a40f3416788a8fc7be387f11bc33394299f468a66b1"
+}
+];
+
+let slides = document.querySelector(".slides");
+let leftArrow = document.querySelector(".left");
+let rightArrow = document.querySelector(".right");
+let quote = document.querySelector(".quote");
+let personName = document.querySelector(".personName");
+let img = slides.appendChild(document.createElement("img"));
+
+img.classList.add("personImage");
+img.src = testimonyPeople[slideNumber].image;
+
+function leftA() {
+return (slideNumber = slideNumber - 1);
+}
+function rightA() {
+return (slideNumber = slideNumber + 1);
+}
+function rightAnimation(nextSlide) {
+slides.classList.add("slideOut");
+setTimeout(() => nextSlide(2, -1, rightA), 900);
+}
+function leftAnimation(nextSlide) {
+slides.classList.add("slideOut");
+setTimeout(() => nextSlide(0, 3, leftA), 900);
+}
+//takes left and right parameters to
+// display peoples img,name and testimony.
+function insertNxtSld(ifEqualNumber, thenNumber, nxtSlideIdx) {
+slides.classList.add("entry-anim");
+if (slideNumber == ifEqualNumber) {
+  slideNumber = thenNumber;
+}
+nxtSlideIdx();
+img.src = testimonyPeople[slideNumber].image;
+quote.innerHTML = testimonyPeople[slideNumber].testimony;
+personName.innerHTML = testimonyPeople[slideNumber].name;
+slides.classList.remove("slideOut");
+}
+//removes entry animation
+//runs left function and animation
+leftArrow.addEventListener("click", () => {
+clearInterval(slideAutoChange);
+slides.classList.remove("entry-anim");
+leftAnimation(insertNxtSld);
+});
+
+//removes entry animation
+//runs right function and animation
+rightArrow.addEventListener("click", function () {
+clearInterval(slideAutoChange);
+slides.classList.remove("entry-anim");
+rightAnimation(insertNxtSld);
+});
+
+//slide will start changing until you hit one of the
+//arrows
+let slideAutoChange = setInterval(() => {
+slides.classList.remove("entry-anim");
+rightAnimation(insertNxtSld);
+}, 3000);
 
 </script>
    </body>
