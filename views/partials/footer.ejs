@@ -1,138 +1,137 @@
+<footer>
+  <p>Copyright © 2023 light-rizer.com, All rights reserved.</p>
+  <a style=' color: #205E61;text-decoration: none;' href="https://www.flaticon.com/free-animated-icons/sun" target="_blank" title="sun animated icons">
+    Sun animated icons created by Freepik - Flaticon
+  </a>
+</footer>
 
- <footer >
-   <p>Copyright © 2023 light-rizer.com, All rights reserved.</p>
-    <a style=' color: #205E61;text-decoration: none;' href="https://www.flaticon.com/free-animated-icons/sun" target="_blank" title="sun animated icons">
-      Sun animated icons created by Freepik - Flaticon
-    </a>
-  </footer>
-
-  <script src="https://unpkg.com/scrollreveal"></script>
+<script src="https://unpkg.com/scrollreveal"></script>
 
 <script type='text/javascript'>
-//For attention heading in index.ejs
-var slideUp = {
+  //For attention heading in index.ejs
+  var slideUp = {
     distance: '50%',
-    easing:'ease-in',
-    origin:'left'
-};
+    easing: 'ease-in',
+    origin: 'left'
+  };
 
-//For message animation in settings.ejs
-var slideUp2 = {
+  //For message animation in settings.ejs
+  var slideUp2 = {
     distance: '50%',
-    easing:'ease-in',
-    origin:'bottom'
-};
-ScrollReveal().reveal('.home-ul',slideUp);
-ScrollReveal().reveal('.bubble',slideUp2);
-//code that sends timeZone to server.
-let city=Intl.DateTimeFormat().resolvedOptions().timeZone;
-let clientZone= document.querySelector('.client-timezone');
-if(clientZone){
-  console.log('clientZone appears')
-  clientZone.value=city;
-}
-
-let hamburger= document.querySelector(".hamburger");
-
-let uL= document.getElementById("target");
-
-let li= document.querySelectorAll(".nav-link");
-
-//not clicked
-let lightSwitch=false;
-//detects when hamburger is clicked
-hamburger.addEventListener("click",function(){
-if(!lightSwitch){
-  console.log(li.length);
-  console.log(li);
-  if(li.length==5){
-    //removes animation that lets us shrink the ul
-    uL.classList.remove("detach");
-    //adds animation for ul to grow
-    uL.classList.add("attach");
-    //animates our hamburger lines to move in a cross
-    hamburger.classList.add('open');
-    //we have clicked our hamburger
-  }else{//if we havent logged in yet our li length is shorter so we make animation size shorter
-    //removes animation that lets us shrink the ul
-    uL.classList.remove("detach2");
-    //adds animation for ul to grow
-    uL.classList.add("attach2");
-    //animates our hamburger lines to move in a cross
-    hamburger.classList.add('open');
-    //we have clicked our hamburge
-  }
-  lightSwitch=true;
-
-}else{//everything is expanded
-  console.log(li.length);
-  console.log(li);
-  if(li.length==5){
-    //we remove the ul ability animate growing
-    uL.classList.remove("attach");
-    //we add animation of shrinking
-    uL.classList.add("detach");
-    //remove animation and the lines revert back to original position
-    hamburger.classList.remove('open');
-  }else{//if we havent logged in yet our li length is shorter so we make animation size shorter
-    //we remove the ul ability animate growing
-    uL.classList.remove("attach2");
-    //we add animation of shrinking
-    uL.classList.add("detach2");
-    //remove animation and the lines revert back to original position
-    hamburger.classList.remove('open');
+    easing: 'ease-in',
+    origin: 'bottom'
+  };
+  ScrollReveal().reveal('.home-ul', slideUp);
+  ScrollReveal().reveal('.bubble', slideUp2);
+  //code that sends timeZone to server.
+  let city = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  let clientZone = document.querySelector('.client-timezone');
+  if (clientZone) {
+    console.log('clientZone appears')
+    clientZone.value = city;
   }
 
-  lightSwitch=false;
-}
+  let hamburger = document.querySelector(".hamburger");
 
-});
+  let uL = document.getElementById("target");
+
+  let li = document.querySelectorAll(".nav-link");
+
+  //not clicked
+  let lightSwitch = false;
+  //detects when hamburger is clicked
+  hamburger.addEventListener("click", function() {
+    if (!lightSwitch) {
+      console.log(li.length);
+      console.log(li);
+      if (li.length == 5) {
+        //removes animation that lets us shrink the ul
+        uL.classList.remove("detach");
+        //adds animation for ul to grow
+        uL.classList.add("attach");
+        //animates our hamburger lines to move in a cross
+        hamburger.classList.add('open');
+        //we have clicked our hamburger
+      } else { //if we havent logged in yet our li length is shorter so we make animation size shorter
+        //removes animation that lets us shrink the ul
+        uL.classList.remove("detach2");
+        //adds animation for ul to grow
+        uL.classList.add("attach2");
+        //animates our hamburger lines to move in a cross
+        hamburger.classList.add('open');
+        //we have clicked our hamburge
+      }
+      lightSwitch = true;
+
+    } else { //everything is expanded
+      console.log(li.length);
+      console.log(li);
+      if (li.length == 5) {
+        //we remove the ul ability animate growing
+        uL.classList.remove("attach");
+        //we add animation of shrinking
+        uL.classList.add("detach");
+        //remove animation and the lines revert back to original position
+        hamburger.classList.remove('open');
+      } else { //if we havent logged in yet our li length is shorter so we make animation size shorter
+        //we remove the ul ability animate growing
+        uL.classList.remove("attach2");
+        //we add animation of shrinking
+        uL.classList.add("detach2");
+        //remove animation and the lines revert back to original position
+        hamburger.classList.remove('open');
+      }
+
+      lightSwitch = false;
+    }
+
+  });
 </script>
 
 <%# //phone input script  %>
 <script type="text/javascript">
-  let firstInput=document.querySelector('.firstInput');
-  let secondInput=document.querySelector('.secondInput');
-  let thirdInput=document.querySelector('.thirdInput');
+  let firstInput = document.querySelector('.firstInput');
+  let secondInput = document.querySelector('.secondInput');
+  let thirdInput = document.querySelector('.thirdInput');
 
-//first part of phone number input will listen for typing.
-  firstInput.addEventListener('keydown',function(e){
+  //first part of phone number input will listen for typing.
+  firstInput.addEventListener('keydown', function(e) {
     //if input is filled out and the maxLength is surpassed we jump to the next input(no backspaces are pressed);
-    if(e.keyCode!==8&&firstInput.value.length == firstInput.maxLength){
+    if (e.keyCode !== 8 && firstInput.value.length == firstInput.maxLength) {
       console.log('they equal length, so we be able to tab over');
       secondInput.focus();
     }
-    })
-    //middle part of phone number input will listen for typing.
-    secondInput.addEventListener('keydown',function(e){
-      //when our input is empty and backspace is pressed we jump back to previous input.
-      if(e.keyCode==8 && secondInput.value==''){
-        firstInput.focus();
-      }
-      //if input is filled out and the maxLength is surpassed we jump to the next input(no backspaces are pressed);
-      if(e.keyCode!==8&&secondInput.value.length == secondInput.maxLength){
-        thirdInput.focus();
-      }
-      })
-      //Last part of phone number input will listen for typing.
-      thirdInput.addEventListener('keydown',function(e){
-        //when our input is empty and backspace is pressed we jump back to previous input.
-        if(e.keyCode==8 && thirdInput.value==''){
-          secondInput.focus();
-        }
-      })
+  })
+  //middle part of phone number input will listen for typing.
+  secondInput.addEventListener('keydown', function(e) {
+    //when our input is empty and backspace is pressed we jump back to previous input.
+    if (e.keyCode == 8 && secondInput.value == '') {
+      firstInput.focus();
+    }
+    //if input is filled out and the maxLength is surpassed we jump to the next input(no backspaces are pressed);
+    if (e.keyCode !== 8 && secondInput.value.length == secondInput.maxLength) {
+      thirdInput.focus();
+    }
+  })
+  //Last part of phone number input will listen for typing.
+  thirdInput.addEventListener('keydown', function(e) {
+    //when our input is empty and backspace is pressed we jump back to previous input.
+    if (e.keyCode == 8 && thirdInput.value == '') {
+      secondInput.focus();
+    }
+  })
 </script>
 <%# script for password viewer %>
 <script type="text/javascript">
-  let eyeIcon=document.querySelector('.eye');
-  let input=document.querySelector('.see-password');
-  eyeIcon.addEventListener('click',function(){
-    if(input.type=='password'){
-      input.type='';
+  let eyeIcon = document.querySelector('.eye');
+  let input = document.querySelector('.see-password');
+  eyeIcon.addEventListener('click', function() {
+    if (input.type == 'password') {
+      input.type = '';
       eyeIcon.classList.remove('fa-eye');
       eyeIcon.classList.add('fa-eye-slash');
-    }else{
-      input.type='password';
+    } else {
+      input.type = 'password';
       eyeIcon.classList.remove('fa-eye-slash');
       eyeIcon.classList.add('fa-eye');
     }
@@ -141,89 +140,91 @@ if(!lightSwitch){
 </script>
 <%# SLIDE ANIMATION  %>
 <script type="text/javascript">
-let slideNumber = 0;
+  let slideNumber = 0;
 
-let testimonyPeople = [
-{
-  testimony: "I built it!",
-  name: "-ricky",
-  image:
-    "https://img.freepik.com/free-photo/indian-man-smiling-cheerful-expression-closeup-portrait_53876-129387.jpg?w=740&t=st=1678986367~exp=1678986967~hmac=bc2c822bf87480dc1782872f1556b41969c60c1707a7f43ecf6b2b6b6e6bb593"
-},
-{
-  testimony: "good job kiki!",
-  name: "-rene",
-  image:
-    "https://img.freepik.com/free-photo/pretty-fat-man-smiles-checking-his-smartphone-while-he-sits-sofa-eats_8353-5517.jpg?w=740&t=st=1678986439~exp=1678987039~hmac=83bf3f736c3e6fd3592057fffda5ac5caaba854d00f4e32ce17ed78340485ce3"
-},
-{
-  testimony: "thats cool...",
-  name: "-lili",
-  image:
-    "https://img.freepik.com/free-photo/size-inclusive-women-fashion-black-tank-top_53876-97037.jpg?w=360&t=st=1678986502~exp=1678987102~hmac=710c8b0fe65d381efca46a40f3416788a8fc7be387f11bc33394299f468a66b1"
-}
-];
+  let testimonyPeople = [{
+      testimony: "I needed better sleep and Light Rizer has helped change my circadium rhythm!",
+      name: "-Tim",
+      image: "/images/testimony-man.jpg"
+    },
+    {
+      testimony: "I love watching the sunrise! The benefits of better sleep helps too!",
+      name: "-Sally",
+      image: "/images/curlyHairWoman.jpg"
+    },
+    {
+      testimony: "Im not a morning person but getting light in my eyes helps me get energized.",
+      name: "-Stephanie",
+      image: "/images/stephanie-testimony.jpg"
+    }
+  ];
 
-let slides = document.querySelector(".slides");
-let leftArrow = document.querySelector(".left");
-let rightArrow = document.querySelector(".right");
-let quote = document.querySelector(".quote");
-let personName = document.querySelector(".personName");
-let img = slides.appendChild(document.createElement("img"));
+  let slides = document.querySelector(".slides");
+  let testimonyContainer=document.querySelector('.testimonyContainer');
+  let leftArrow = document.querySelector(".left");
+  let rightArrow = document.querySelector(".right");
+  let quote = document.querySelector(".quote");
+  let personName = document.querySelector(".personName");
+  // let img = slides.appendChild(document.createElement("img"));
+  let img = document.querySelector('.personImage');
+  // img.classList.add("personImage");
+  img.src = testimonyPeople[slideNumber].image;
+  quote.innerHTML=testimonyPeople[slideNumber].testimony;
+  personName.innerHTML=testimonyPeople[slideNumber].name;
 
-img.classList.add("personImage");
-img.src = testimonyPeople[slideNumber].image;
+  function leftA() {
+    return (slideNumber = slideNumber - 1);
+  }
 
-function leftA() {
-return (slideNumber = slideNumber - 1);
-}
-function rightA() {
-return (slideNumber = slideNumber + 1);
-}
-function rightAnimation(nextSlide) {
-slides.classList.add("slideOut");
-setTimeout(() => nextSlide(2, -1, rightA), 900);
-}
-function leftAnimation(nextSlide) {
-slides.classList.add("slideOut");
-setTimeout(() => nextSlide(0, 3, leftA), 900);
-}
-//takes left and right parameters to
-// display peoples img,name and testimony.
-function insertNxtSld(ifEqualNumber, thenNumber, nxtSlideIdx) {
-slides.classList.add("entry-anim");
-if (slideNumber == ifEqualNumber) {
-  slideNumber = thenNumber;
-}
-nxtSlideIdx();
-img.src = testimonyPeople[slideNumber].image;
-quote.innerHTML = testimonyPeople[slideNumber].testimony;
-personName.innerHTML = testimonyPeople[slideNumber].name;
-slides.classList.remove("slideOut");
-}
-//removes entry animation
-//runs left function and animation
-leftArrow.addEventListener("click", () => {
-clearInterval(slideAutoChange);
-slides.classList.remove("entry-anim");
-leftAnimation(insertNxtSld);
-});
+  function rightA() {
+    return (slideNumber = slideNumber + 1);
+  }
 
-//removes entry animation
-//runs right function and animation
-rightArrow.addEventListener("click", function () {
-clearInterval(slideAutoChange);
-slides.classList.remove("entry-anim");
-rightAnimation(insertNxtSld);
-});
+  function rightAnimation(nextSlide) {
+    testimonyContainer.classList.add("slideOut");
+    setTimeout(() => nextSlide(2, -1, rightA), 900);
+  }
 
-//slide will start changing until you hit one of the
-//arrows
-let slideAutoChange = setInterval(() => {
-slides.classList.remove("entry-anim");
-rightAnimation(insertNxtSld);
-}, 3000);
+  function leftAnimation(nextSlide) {
+    testimonyContainer.classList.add("slideOut");
+    setTimeout(() => nextSlide(0, 3, leftA), 900);
+  }
+  //takes left and right parameters to
+  // display peoples img,name and testimony.
+  function insertNxtSld(ifEqualNumber, thenNumber, nxtSlideIdx) {
+    testimonyContainer.classList.add("entry-anim");
+    if (slideNumber == ifEqualNumber) {
+      slideNumber = thenNumber;
+    }
+    nxtSlideIdx();
+    img.src = testimonyPeople[slideNumber].image;
+    quote.innerHTML = testimonyPeople[slideNumber].testimony;
+    personName.innerHTML = testimonyPeople[slideNumber].name;
+    testimonyContainer.classList.remove("slideOut");
+  }
+  //removes entry animation
+  //runs left function and animation
+  leftArrow.addEventListener("click", () => {
+    clearInterval(slideAutoChange);
+    testimonyContainer.classList.remove("entry-anim");
+    leftAnimation(insertNxtSld);
+  });
 
+  //removes entry animation
+  //runs right function and animation
+  rightArrow.addEventListener("click", function() {
+    clearInterval(slideAutoChange);
+    testimonyContainer.classList.remove("entry-anim");
+    rightAnimation(insertNxtSld);
+  });
+
+  //slide will start changing until you hit one of the
+  //arrows
+  let slideAutoChange = setInterval(() => {
+    testimonyContainer.classList.remove("entry-anim");
+    rightAnimation(insertNxtSld);
+  }, 5000);
 </script>
-   </body>
-   </html>
+</body>
+
+</html>

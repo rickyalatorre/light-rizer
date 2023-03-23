@@ -89,18 +89,32 @@ padding:20px;
 }
 
 /* SLIDES  */
+.testimonyContainer{
+  background-color: white;
+width: 80%;
+height: 200px;
+color:#3F979B;
+}
+.personName{
+  text-align: center;
+}
+.quote{
+  text-align:center;
+}
 .slides {
-  background-color: grey;
-  width: 200px;
-  height: 150px;
-  color: white;
-  border: 1px solid pink;
+  display:flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 600px;
+  height: 350px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px #205E61;
 }
 
 .slideOut {
   animation-name: slide-out;
   animation-fill-mode: forwards;
-  animation-duration: 0.9s;
+  animation-duration: 1.2s;
 }
 @keyframes slide-out {
   from {
@@ -113,7 +127,7 @@ padding:20px;
 .entry-anim {
   animation-name: entry;
   animation-fill-mode: forwards;
-  animation-duration: 1.2s;
+  animation-duration: 2s;
 }
 @keyframes entry {
   from {
@@ -125,9 +139,10 @@ padding:20px;
 }
 .slides-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  background-color: yellow;
+  height:500px;
+  /* background-color: yellow; */
 }
 
 .icons {
@@ -144,7 +159,6 @@ padding:20px;
 
 @media only screen and (max-width: 600px) {
   /* HOME */
-
   .attention-grab{
     display: block;
     height:300px;
@@ -175,6 +189,10 @@ padding:20px;
   .home-p{
     width:100%;
     font-size: 18px;
+  }
+  /* SLIDES  */
+  .slides-container{
+    height:450px;
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
