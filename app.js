@@ -22,10 +22,10 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 const path = require('path');
-// app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(cookieParser());
+
 app.use(express.json());
 
 const uid = require('uuid');
@@ -34,18 +34,21 @@ app.use(express.static("public"));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
-//express.urlencoded() is a method inbuilt in express to recognize the incoming Request Object as strings or arrays.
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 const port = 3100;
+
 const db = require('./database.js');
-// const pgp = require('pg-promise')(/* options */)
-// const db = pgp('postgres://postgres:pulga@localhost:5432/onehabit')
+
 const accountSid = process.env.ACCOUNT_SID;
-  const authToken= process.env.AUTH_TOKEN;
+
+const authToken= process.env.AUTH_TOKEN;
+
 const client = require('twilio')(accountSid, authToken);
 
+//jwt will be made with secret_key. Our server checks that secret_key is still
+//inside jwt to make sure no one tampered with it.
 const signToken = (userID) => {
   return JWT.sign({
     iss: process.env.SECRET_KEY,
@@ -54,37 +57,35 @@ const signToken = (userID) => {
   }, process.env.SECRET_KEY, {})
 };
 
-
 let authenticated = false;
+
+//user to display on navbar
 let user;
+
 let phoneActivation='Messages Unactivated';
 
+// If authenticated then we will remove login and register button from bottom of the page.
+// Will convert navabar into authenticated navbar
 app.get("/", function(req, res) {
+  console.log('**********>:',req.user);
 
-  console.log('/ authenticated:', authenticated);
   if (authenticated) {
     res.render('index', {
       message: true,
       username:user
-      // display:""
     })
   } else {
     res.render('index', {
       message: false,
       username:''
-      // display: registerLoginOption
     })
   }
 });
 
+//will return to /profile if manually typed in when authenticated.
 app.get('/register-page', function(req, res) {
-
   if (authenticated) {
-    res.render('register', {
-      message: true,
-      taken:'',
-      username:''
-    });
+    res.redirect('/profile');
   } else {
     res.render('register', {
       message: false,
@@ -94,86 +95,86 @@ app.get('/register-page', function(req, res) {
   }
 });
 
+//will return to /profile if manually typed in when authenticated.
 app.get('/login-page', function(req, res) {
 
   if (authenticated) {
-    res.render('login', {
-      message: true,
-      username:''
-    })
-  } else {
+    res.redirect('/profile')
+  }
+  else {
     res.render('login', {
       message: false,
-      username:''
-    })
+      username:'',
+    });
   }
-})
+});
 
 app.post("/register", (req, res) => {
   let {userNameReg, passwordReg} = req.body;
-
-//this checks our POSTGRESQL if the username exits.If not it will be caught in .catch
+//this checks our POSTGRESQL if the username exists.
+//db.none Executes a query that expects no data to be returned. If the query returns any data, the method rejects.
+//if data is true then we result to landing in else{}.
+//if there is no data. We use passwordReg and hash it using bycrypt.
   db.none('SELECT username FROM users WHERE username = $1', userNameReg).then((data) => {
-
     ///bcrypt
     bcrypt.hash(passwordReg, 10)
     .then(function(hash) {
       passwordReg = hash;
-      ///INSERTING TO POSTGRESQL AFTER HASHING
+      ///INSERTING TO POSTGRESQL AFTER HASHING sending us to /login
       //crud - create
       db.none('INSERT INTO users VALUES($1,$2,$3,$4,$5)', [uid.v4(), passwordReg, '', '', userNameReg]).then((x) => {
         res.status(200).redirect('/login-page');
       }).catch(err => {
-        console.log('something went wront with inserting user values');
+        console.log('something went wrong with inserting user values');
       });
-
-      //ENDING INSERTING TO POSTGRESQL AFTER HASHING
     }).catch((err) => {
       console.log('err:', err);
     });
     ///END bcrypt
   }).catch((err) => {
-    //let send back data to register.ejs
-
+    //if username and password already exists we send back taken to /register-page
     res.render('register', {
       message: false,
       taken:'<h3 class="reg-taken">Username taken. Please try again</h3>',
       username:''
     })
-
   })// END DATABASE CHECK FOR USERNAME
-
 });//END REGISTER ROUTE
 
 
-// I NEED TO BE ABLE TO CHECK PASSWORD AND HASH/SALT FROM DATABASE
-// SEE IF I CAN RETRIEVE USER PASSWORD HERE.
+//retrieves req.user[0] and req.isAuthenticated from passport local when
+//username and password are correct. Else will direct us back to login-page.
 app.post("/login",passport.authenticate('local', {
-  failureRedirect: '/login-page',
+  failureRedirect:'/login-page',
   session: false
 }), (req, res) => {
-
-  console.log('/login authenticated?', req.isAuthenticated());
+  //passport local will authenticate our username and password and then send us
+  //user object as req.user array
   const {password, user_uid} = req.user[0];
-
+  //req.isAuthenticated() is going to be added by passport by default
   if (req.isAuthenticated()) {
-
-    console.log('phone from /login:',req.user[0].phone);
-
     authenticated = true;
+    //username to display on navbar
     user=req.user[0].username;
+    //will run signToken function and using our user_uid plus secret to create a token
     let token = signToken(user_uid);
     res.cookie('access_token', token, {
       httpOnly: true,
       sameSite: true
     });
-
       res.redirect('/profile');
-
   }
+  else if(!req.isAuthenticated){
+    res.render('login',{
+      incorrect:'Re-enter username and password'
+    })
+  };
 });
 
-app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) => {
+app.get('/settings',passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res) => {
   console.log('phone from /settings:',req.user[0].phone);
   res.render('settings', {
     message: true,
@@ -182,7 +183,10 @@ app.get('/settings',passport.authenticate('jwt', {session: false}), (req, res) =
 });
 
 //if phone !=='' then have /profile route render activated
-app.post('/settings-submit', passport.authenticate('jwt', {session: false}),(req, res) => {
+app.post('/settings-submit', passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}),(req, res) => {
   const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
 
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
@@ -209,18 +213,7 @@ app.post('/settings-submit', passport.authenticate('jwt', {session: false}),(req
     };
     console.log('localSunriseTime fro settings-sub:',dataObj.localSunriseTime());
     console.log('minus30 from settings-submit:',dataObj.minus30Minutes());
-//     let retrievedSeconds=data.dt;
-//     let timeZone=data.timezone;
-//     let cityName = data.name;
-//     let sunriseSec = data.sys.sunrise;
-//     let d= new Date(sunriseSec*1000);
-//     let localSunriseTime= d.toLocaleTimeString('en-US',{timeZone:`${location}`});
-// console.log('from settings-submit:',localSunriseTime);
-//
-// let s=new Date((sunriseSec-1800)*1000);
-// let minus30Minutes = s.toLocaleTimeString('en-US',{timeZone:`${location}`});
-//
-// console.log('from settings-submit:',minus30Minutes);
+
 //crud - update
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
       areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
@@ -237,14 +230,20 @@ app.post('/settings-submit', passport.authenticate('jwt', {session: false}),(req
 
 })
 
-app.get("/logout", passport.authenticate('jwt', {session: false}), (req, res) => {
+app.get("/logout", passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res) => {
   res.clearCookie('access_token');
   authenticated = false;
   res.status(200).redirect('/');
 });
 
 
-app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) => {
+app.get('/profile', passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res) => {
   console.log('phone from /profile:',req.user[0].phone);
 
   if (req.user[0].phone != '' && req.user[0].areaCode != '') {
@@ -272,7 +271,10 @@ app.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) =
 });
 
 //unactivated to profile
-app.post('/clear-phone',passport.authenticate('jwt', {session: false}), (req, res)=>{
+app.post('/clear-phone',passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res)=>{
   phoneActivation='Messages Unactivated';
 clearInterval(timerInterval);
 console.log('CLEARINTERVAL SHOULD HAVE CLEARED');
