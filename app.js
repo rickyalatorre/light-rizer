@@ -148,6 +148,7 @@ app.post("/register", (req, res) => {
 
 // I NEED TO BE ABLE TO CHECK PASSWORD AND HASH/SALT FROM DATABASE
 // SEE IF I CAN RETRIEVE USER PASSWORD HERE.
+//add this comment to see if itll be saved in home-improvement but not main
 app.post("/login",passport.authenticate('local', {
   failureRedirect: '/login-page',
   session: false
