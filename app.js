@@ -60,7 +60,7 @@ const signToken = (userID) => {
 let authenticated = false;
 
 //user to display on navbar
-let user;
+let userName;
 
 let phoneActivation='Messages Unactivated';
 
@@ -72,7 +72,7 @@ app.get("/", function(req, res) {
   if (authenticated) {
     res.render('index', {
       message: true,
-      username:user
+      username:userName
     })
   } else {
     res.render('index', {
@@ -105,6 +105,7 @@ app.get('/login-page', function(req, res) {
     res.render('login', {
       message: false,
       username:'',
+      messageFailure:''
     });
   }
 });
@@ -144,32 +145,45 @@ app.post("/register", (req, res) => {
 
 //retrieves req.user[0] and req.isAuthenticated from passport local when
 //username and password are correct. Else will direct us back to login-page.
-app.post("/login",passport.authenticate('local', {
-  failureRedirect:'/login-page',
-  session: false
-}), (req, res) => {
-  //passport local will authenticate our username and password and then send us
-  //user object as req.user array
-  const {password, user_uid} = req.user[0];
-  //req.isAuthenticated() is going to be added by passport by default
-  if (req.isAuthenticated()) {
-    authenticated = true;
-    //username to display on navbar
-    user=req.user[0].username;
-    //will run signToken function and using our user_uid plus secret to create a token
-    let token = signToken(user_uid);
-    res.cookie('access_token', token, {
-      httpOnly: true,
-      sameSite: true
-    });
-      res.redirect('/profile');
-  }
-  else if(!req.isAuthenticated){
-    res.render('login',{
-      incorrect:'Re-enter username and password'
-    })
-  };
+
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', { session: false }, function(err, user, info) {
+    if (err) {
+      console.log('error---->',error)
+      res.render('login', {
+        message: false,
+        username:'',
+        messageFailure:error
+      });
+    }
+    if (!user) {
+      console.log('!user statement---->',info.message);
+      res.render('login', {
+        message: false,
+        username:'',
+        messageFailure:info.message
+      });
+    }
+    // ... handle successful authentication
+    console.log('user moved--------->',user);
+if(user){
+  const userPassword=user[0].password;
+  const userUserUid=user[0].user_uid;
+
+      authenticated = true;
+      userName=user[0].username;
+      let token = signToken(userUserUid);
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        sameSite: true
+      });
+        res.redirect('/profile');
+}
+
+
+  })(req, res, next);
 });
+
 
 app.get('/settings',passport.authenticate('jwt', {
   failureRedirect: '/login-page',
@@ -178,7 +192,7 @@ app.get('/settings',passport.authenticate('jwt', {
   console.log('phone from /settings:',req.user[0].phone);
   res.render('settings', {
     message: true,
-    username:user
+    username:userName
   });
 });
 
@@ -254,7 +268,7 @@ app.get('/profile', passport.authenticate('jwt', {
       areaCode: req.user[0].areacode,
       sunriseMessage: `<span>The sun will rise at <span class="unbreak">${req.user[0].time}</span> in <span class="unbreak">${req.user[0].city}</span></span>`,
       message: true,
-      username:user
+      username:userName
     });
   } else {
     res.render('profile', {
@@ -264,7 +278,7 @@ app.get('/profile', passport.authenticate('jwt', {
       areaCode: req.user[0].areacode,
       sunriseMessage: '<a href="/settings">Click here to set up your phone number and zip code</a>',
       message: true,
-      username:user
+      username:userName
     });
   }
 

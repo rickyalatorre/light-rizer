@@ -55,28 +55,29 @@ else{
 //if it does exists then we check if the password is the correct password and if
 //it is then we reverse that password and authenticate.
 passport.use(new LocalStrategy((username,password,done)=>{
+
   db.any('SELECT * FROM users WHERE username = $1', username)
   .then(function(user) {
     if(user.length == 0){
-      return done(null, false);
+      console.log('no user found: !user statement')
+      return done(null, false,{message:'no user found'});
     }
-//store hashed password from database into hash variable.
+    console.log('user param:',user);
     let hashed=user[0].password;
-//will compare uncypted passwored and hash in database
+    console.log('hashed pass:',hashed);
+
     bcrypt.compare(password,hashed)
     .then(function (result){
-//if it does not match return done(null,false,{message:'password does not match'})
+      console.log('result:',result);
       if(!result){
         console.log('does not match');
-        return done(null, false);
+        return done(null, false,{message:'password does not match'});
       }
-      //if password matches encypted then return  done(null,user);
         return done(null, user);
     })
 
   })
   .catch(function(error) {
     if (error) { return done(error); }
-    if(!user){return done(null,false,{message:'no user found'})}
   });
 }));
