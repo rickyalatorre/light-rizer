@@ -1,3 +1,6 @@
+html.sr .load-hidden {
+    visibility: hidden;
+}
 .stopMessages-p{
   font-size: 20px;
   padding:15px;

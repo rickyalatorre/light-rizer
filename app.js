@@ -67,7 +67,6 @@ let phoneActivation='Messages Unactivated';
 // If authenticated then we will remove login and register button from bottom of the page.
 // Will convert navabar into authenticated navbar
 app.get("/", function(req, res) {
-  console.log('**********>:',req.user);
 
   if (authenticated) {
     res.render('index', {
@@ -82,7 +81,7 @@ app.get("/", function(req, res) {
   }
 });
 
-//will return to /profile if manually typed in when authenticated.
+// Will return to /profile if manually typed in when authenticated.
 app.get('/register-page', function(req, res) {
   if (authenticated) {
     res.redirect('/profile');
@@ -95,7 +94,7 @@ app.get('/register-page', function(req, res) {
   }
 });
 
-//will return to /profile if manually typed in when authenticated.
+// Will return to /profile if manually typed in when authenticated.
 app.get('/login-page', function(req, res) {
 
   if (authenticated) {
@@ -112,10 +111,10 @@ app.get('/login-page', function(req, res) {
 
 app.post("/register", (req, res) => {
   let {userNameReg, passwordReg} = req.body;
-//this checks our POSTGRESQL if the username exists.
-//db.none Executes a query that expects no data to be returned. If the query returns any data, the method rejects.
-//if data is true then we result to landing in else{}.
-//if there is no data. We use passwordReg and hash it using bycrypt.
+// This checks our POSTGRESQL if the username exists.
+// db.none Executes a query that expects no data to be returned. If the query returns any data, the method rejects.
+// if data is true then we result to landing in else{}.
+// if there is no data. We use passwordReg and hash it using bycrypt.
   db.none('SELECT username FROM users WHERE username = $1', userNameReg).then((data) => {
     ///bcrypt
     bcrypt.hash(passwordReg, 10)
@@ -136,14 +135,14 @@ app.post("/register", (req, res) => {
     //if username and password already exists we send back taken to /register-page
     res.render('register', {
       message: false,
-      taken:'<h3 class="reg-taken">Username taken. Please try again</h3>',
+      taken:'<h3 class="submission-error">Username taken. Please try again</h3>',
       username:''
     })
-  })// END DATABASE CHECK FOR USERNAME
-});//END REGISTER ROUTE
+  })
+});
 
 
-//retrieves req.user[0] and req.isAuthenticated from passport local when
+//Retrieves req.user[0] and req.isAuthenticated from passport local when
 //username and password are correct. Else will direct us back to login-page.
 
 app.post('/login', function(req, res, next) {
@@ -161,11 +160,10 @@ app.post('/login', function(req, res, next) {
       res.render('login', {
         message: false,
         username:'',
-        messageFailure:info.message
+        messageFailure:`<h3 class="submission-error">${info.message}</h3>`
       });
     }
-    // ... handle successful authentication
-    console.log('user moved--------->',user);
+
 if(user){
   const userPassword=user[0].password;
   const userUserUid=user[0].user_uid;
@@ -179,8 +177,6 @@ if(user){
       });
         res.redirect('/profile');
 }
-
-
   })(req, res, next);
 });
 
@@ -189,28 +185,25 @@ app.get('/settings',passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res) => {
-  console.log('phone from /settings:',req.user[0].phone);
   res.render('settings', {
     message: true,
     username:userName
   });
 });
 
-//if phone !=='' then have /profile route render activated
+//If phone !=='' then have /profile route render activated
 app.post('/settings-submit', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }),(req, res) => {
   const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
-
+// Turn collect all 3 phone number inputs and combine them
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
   if(phone!==''){
     phoneActivation='Messages Activated';
   }
-  console.log('phone-->',phone);
 
   let phoneUS= `+1${phone}`;
-  console.log('--------------->:',location);
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
@@ -225,10 +218,8 @@ app.post('/settings-submit', passport.authenticate('jwt', {
       localSunriseTime: function(){return new Date(this.sunriseSec*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
       minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})}
     };
-    console.log('localSunriseTime fro settings-sub:',dataObj.localSunriseTime());
-    console.log('minus30 from settings-submit:',dataObj.minus30Minutes());
 
-//crud - update
+// Updating zip code and phone number and or activating messages
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
       areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
     ]).then((d) => {
@@ -241,8 +232,7 @@ app.post('/settings-submit', passport.authenticate('jwt', {
     /// END DB QUERY
 
   }).catch((err) => console.log(err));
-
-})
+});
 
 app.get("/logout", passport.authenticate('jwt', {
   failureRedirect: '/login-page',
@@ -258,8 +248,8 @@ app.get('/profile', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res) => {
-  console.log('phone from /profile:',req.user[0].phone);
-
+// If phone number and zip code are not empty strings then profile will display time in your city.
+// Else profile will have a message directing us to settings to set up phone number and zip code to activate messages
   if (req.user[0].phone != '' && req.user[0].areaCode != '') {
     res.render('profile', {
       messagesActivated:phoneActivation,
@@ -284,49 +274,43 @@ app.get('/profile', passport.authenticate('jwt', {
 
 });
 
-//unactivated to profile
+//Unactivated to profile
 app.post('/clear-phone',passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res)=>{
   phoneActivation='Messages Unactivated';
 clearInterval(timerInterval);
-console.log('CLEARINTERVAL SHOULD HAVE CLEARED');
 res.redirect('/profile');
 });
 
 app.use(passport.initialize());
 
-//use zip code for api to get dt. get time of 30 min before'
+// Catcher will catch the new time 30 min before sunrise time
 let catcher;
 function time(dataObj){ //runs every second.
-//get current time and compare with
+
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
-// console.log(`${dataObj.phone}: `,nodeTime);
-// console.log('minus30:',dataObj.minus30Minutes());
-// let timeTester='11:34:30 AM';
-// console.log('minus30:',dataObj.minus30Minutes());
+// When current time equals to 30 min before sunrise call weather api again to get
+// any new time the sun will rise
   if(nodeTime == dataObj.minus30Minutes()){
     console.log(`api was called again at ${dataObj.minus30Minutes()}`);
     //make api call and set new values to sunriseRegular
     fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${dataObj.areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
       return res.json();
     }).then((data) => {
-
       let dt3 = data.sys.sunrise;
       let date3 = new Date(dt3 * 1000);
-      // catcher = date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
+      // Catcher will catch the new time and save it.
       catcher=date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
-  // console.log('catcher:',catcher);
     })
     .catch(err=>console.log(err));
   };
-// console.log('catcher here:',catcher);
+// If our current time in our city is the same as sunrise time sent from weather Api send a text message
   if(nodeTime==catcher){
-    console.log('-------------->> true that nodeTime && catcher are the same');
     client.messages
       .create({
-         body: 'Testing from rickys project app. The sun is out! go get some light',
+         body: 'The sun is out! go get some light',
          from: '+15626008651',
          to: dataObj.phone
        })
@@ -338,6 +322,8 @@ let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location})
 
 };
 
+// Will run our timer every second and we can unactive messages by
+// calling clear timer in /clear-phone route
 let timerInterval;
 function timeInterval(dataObj){
     timerInterval= setInterval(function(){time(dataObj)},1000);
