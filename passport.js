@@ -12,6 +12,7 @@ const bcrypt= require('bcrypt');
 // extracts cookie in a custom way.
 //uses that cookie for the session.
 var cookieExtractor = function(req) {
+  console.log('req.cookies:',req.cookies);
     var token = null;
     if (req && req.cookies)
     {

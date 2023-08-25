@@ -92,6 +92,7 @@
   let firstInput = document.querySelector('.firstInput');
   let secondInput = document.querySelector('.secondInput');
   let thirdInput = document.querySelector('.thirdInput');
+if(firstInput && secondInput && thirdInput){
 
   //first part of phone number input will listen for typing.
   firstInput.addEventListener('keydown', function(e) {
@@ -119,12 +120,16 @@
       secondInput.focus();
     }
   })
+}else{
+  console.log('1,2,3 inputs dont exist')
+}
 </script>
 <%# script for password viewer %>
 <script type="text/javascript">
   let eyeIcon = document.querySelector('.eye');
   let input = document.querySelector('.see-password');
-  eyeIcon.addEventListener('click', function() {
+  if(eyeIcon && input){
+      eyeIcon.addEventListener('click', function() {
     if (input.type == 'password') {
       input.type = '';
       eyeIcon.classList.remove('fa-eye');
@@ -134,8 +139,10 @@
       eyeIcon.classList.remove('fa-eye-slash');
       eyeIcon.classList.add('fa-eye');
     }
-
   })
+}else{
+  console.log('eye doesnt exist');
+}
 </script>
 <%# SLIDE ANIMATION  %>
 <script type="text/javascript">
@@ -166,6 +173,7 @@
   let personName = document.querySelector(".personName");
   // let img = slides.appendChild(document.createElement("img"));
   let img = document.querySelector('.personImage');
+  if(slides){
   // img.classList.add("personImage");
   img.src = testimonyPeople[slideNumber].image;
   quote.innerHTML=testimonyPeople[slideNumber].testimony;
@@ -223,6 +231,7 @@
     testimonyContainer.classList.remove("entry-anim");
     rightAnimation(insertNxtSld);
   }, 5000);
+}
 </script>
 </body>
 

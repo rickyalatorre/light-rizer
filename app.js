@@ -218,7 +218,7 @@ app.post('/settings-submit', passport.authenticate('jwt', {
       localSunriseTime: function(){return new Date(this.sunriseSec*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
       minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})}
     };
-
+console.log('first time call:',dataObj.localSunriseTime());
 // Updating zip code and phone number and or activating messages
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
       areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
@@ -303,6 +303,7 @@ let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location})
       let date3 = new Date(dt3 * 1000);
       // Catcher will catch the new time and save it.
       catcher=date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
+      console.log('new api call time:',catcher);
     })
     .catch(err=>console.log(err));
   };
