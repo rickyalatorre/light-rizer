@@ -37,7 +37,7 @@ const JWT = require('jsonwebtoken');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-const port = 3100;
+const PORT= process.env.PORT || 3100;
 
 const db = require('./database.js');
 
@@ -287,10 +287,11 @@ res.redirect('/profile');
 app.use(passport.initialize());
 
 // Catcher will catch the new time 30 min before sunrise time
-let catcher;
+let catcher='10:36:00 AM';
 function time(dataObj){ //runs every second.
 
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
+console.log('nodeTime:',nodeTime)
 // When current time equals to 30 min before sunrise call weather api again to get
 // any new time the sun will rise
   if(nodeTime == dataObj.minus30Minutes()){
@@ -327,9 +328,10 @@ let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location})
 // calling clear timer in /clear-phone route
 let timerInterval;
 function timeInterval(dataObj){
+  console.log('is this runnin?');
     timerInterval= setInterval(function(){time(dataObj)},1000);
 };
 
-app.listen(port, (res, req) => {
-  console.log(`app.js is running on port ${port}`);
+app.listen(PORT, (res, req) => {
+  console.log(`app.js is running on port ${PORT}`);
 });
