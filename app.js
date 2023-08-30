@@ -152,7 +152,7 @@ app.post('/login', function(req, res, next) {
       res.render('login', {
         message: false,
         username:'',
-        messageFailure:error
+        messageFailure:err
       });
     }
     if (!user) {
