@@ -148,7 +148,7 @@ app.post("/register", (req, res) => {
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', { session: false }, function(err, user, info) {
     if (err) {
-      console.log('error---->',error)
+      console.log('error---->',err)
       res.render('login', {
         message: false,
         username:'',
