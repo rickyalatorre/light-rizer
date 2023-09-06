@@ -196,12 +196,19 @@ app.post('/settings-submit', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }),(req, res) => {
+
   const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
 // Turn collect all 3 phone number inputs and combine them
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
   if(phone!==''){
     phoneActivation='Messages Activated';
   }
+
+//day submitted
+let today= new Date();
+//in 2 in2Days
+const twoDaysLater = new Date();
+twoDaysLater.setDate(today.getDate() + 2);
 
   let phoneUS= `+1${phone}`;
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
@@ -216,9 +223,10 @@ app.post('/settings-submit', passport.authenticate('jwt', {
       cityName:data.name,
       sunriseSec:data.sys.sunrise,
       localSunriseTime: function(){return new Date(this.sunriseSec*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
-      minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})}
+      minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
+      in2Days: twoDaysLater.toDateString(),
+      dayOfSubmit: today.toDateString(),
     };
-console.log('first time call:',dataObj.localSunriseTime());
 // Updating zip code and phone number and or activating messages
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
       areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
@@ -286,14 +294,25 @@ res.redirect('/profile');
 
 app.use(passport.initialize());
 
+let textbeltApi=process.env.TEXTBELT_API;
+
+//*********************** timer *****************************
 // Catcher will catch the new time 30 min before sunrise time
-let catcher='10:36:00 AM';
+let catcher;
 function time(dataObj){ //runs every second.
 
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
-console.log('nodeTime:',nodeTime)
+// console.log('nodeTime:',nodeTime)
+// console.log(dataObj.in2Days);
+
 // When current time equals to 30 min before sunrise call weather api again to get
 // any new time the sun will rise
+if(new Date().toDateString() == dataObj.in2Days){
+  //clear timerInterval
+  console.log(`Day submitted was ${dataObj.dayOfSubmit}. We clear the interval timer at ${nodeTime} on ${new Date().toDateString()}`);
+  clearInterval(timerInterval);
+}
+
   if(nodeTime == dataObj.minus30Minutes()){
     console.log(`api was called again at ${dataObj.minus30Minutes()}`);
     //make api call and set new values to sunriseRegular
@@ -310,25 +329,37 @@ console.log('nodeTime:',nodeTime)
   };
 // If our current time in our city is the same as sunrise time sent from weather Api send a text message
   if(nodeTime==catcher){
-    client.messages
-      .create({
-         body: 'The sun is out! go get some light',
-         from: '+15626008651',
-         to: dataObj.phone
-       })
-      .then(message =>{
-         console.log(`message sent to ${dataObj.phone}. its ${catcher}!!`);
-       })
-       .catch((err)=>console.log('reason we fail sending:',err));
-  };
 
+    let phoneNumber = dataObj.phone; // Replace with the recipient's phone number
+
+    fetch('https://textbelt.com/text', {
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      phone: phoneNumber,
+      message: 'Go out and get some sun!',
+      key: textbeltApi,
+    }),
+  }).then(response => {
+    return response.json();
+  }).then(data => {
+    console.log(data);
+  }).catch(err=>console.log('ERROR: ',err));
+
+}
 };
 
 // Will run our timer every second and we can unactive messages by
 // calling clear timer in /clear-phone route
 let timerInterval;
 function timeInterval(dataObj){
-  console.log('is this runnin?');
+  const now = new Date();
+const hours = String(now.getHours()).padStart(2, '0');
+const minutes = String(now.getMinutes()).padStart(2, '0');
+const seconds = String(now.getSeconds()).padStart(2, '0');
+
+const currentTime = `${hours}:${minutes}:${seconds}`;
+  console.log(`timer started at ${currentTime} on ${dataObj.dayOfSubmit} ....`);
     timerInterval= setInterval(function(){time(dataObj)},1000);
 };
 

@@ -7,6 +7,25 @@
 
 
 <script type='text/javascript'>
+
+// Add an event listener to the form's submit event
+let form=document.getElementById('myForm')
+if(form){
+  form.addEventListener('submit', function(event) {
+      // Prevent the form from submitting immediately
+      event.preventDefault();
+
+      // If the user confirms, you can submit the form programmatically
+      const confirmation = confirm('Light Rizer will send you a text for one day, due to testing purposes. Do you want to proceed with the submission?');
+      if (confirmation) {
+          this.submit(); // Submit the form
+      }else{
+        console.log('check hyper to see if interval is triggered');
+      }
+  });
+}
+
+
   //For attention heading in index.ejs
   var slideUp = {
     distance: '50%',
