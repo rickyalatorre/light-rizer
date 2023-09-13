@@ -191,6 +191,28 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
+app.get('/dontSleep/8277', (req, res) => {
+  // Create a new Date object, which represents the current date and time
+const currentDate = new Date();
+// Get the date components
+const year = currentDate.getFullYear();
+const month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
+const day = currentDate.getDate();
+// Get the time components
+const hours = currentDate.getHours();
+const minutes = currentDate.getMinutes();
+const seconds = currentDate.getSeconds();
+
+  // Define a JSON object to be returned
+  const jsonData = {
+    message: 'Hey dont fall asleep!',
+    date: `Current Date: ${year}-${month}-${day}`,
+    time:`Current Time: ${hours}:${minutes}:${seconds}`
+  };
+  // Use res.json() to send the JSON response
+  res.json(jsonData);
+});
+
 //If phone !=='' then have /profile route render activated
 app.post('/settings-submit', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
