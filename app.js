@@ -33,7 +33,7 @@ const uid = require('uuid');
 app.use(express.static("public"));
 
 const corsOptions = {
-  origin: 'https://rickyalatorre.github.io/', 
+  origin: 'https://rickyalatorre.github.io/',
 };
 
 app.use(cors(corsOptions));
@@ -204,16 +204,24 @@ const currentDate = new Date();
 const year = currentDate.getFullYear();
 const month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
 const day = currentDate.getDate();
-// Get the time components
-const hours = currentDate.getHours();
-const minutes = currentDate.getMinutes();
-const seconds = currentDate.getSeconds();
+
+// Specify the options for formatting and the timezone
+const options = {
+  timeZone: 'America/Los_Angeles', // Los Angeles timezone
+  hour12: true, // 12-hour format (true) or 24-hour format (false)
+  hour: '2-digit', // Display the hour as two digits
+  minute: '2-digit', // Display the minute as two digits
+  second: '2-digit', // Display the second as two digits
+};
+
+// Format the date as a string in Los Angeles timezone
+const losAngelesTime = date.toLocaleTimeString('en-US', options);
 
   // Define a JSON object to be returned
   const jsonData = {
     message: 'Hey dont fall asleep!',
     date: `Current Date: ${year}-${month}-${day}`,
-    time:`Current Time: ${hours}:${minutes}:${seconds}`
+    time: losAngelesTime
   };
   // Use res.json() to send the JSON response
   res.json(jsonData);
