@@ -3,8 +3,9 @@ require("dotenv").config();
 
 const express = require("express");
 require('./passport');
-const app = express();
 const cors=require('cors');
+const app = express();
+
 const bodyParser = require('body-parser');
 
 const pg = require('pg');
