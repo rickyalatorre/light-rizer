@@ -4,7 +4,7 @@ require("dotenv").config();
 const express = require("express");
 require('./passport');
 const app = express();
-
+const cors=require('cors');
 const bodyParser = require('body-parser');
 
 const pg = require('pg');
@@ -31,6 +31,12 @@ app.use(express.json());
 const uid = require('uuid');
 
 app.use(express.static("public"));
+
+const corsOptions = {
+  origin: 'https://rickyalatorre.github.io/', 
+};
+
+app.use(cors(corsOptions));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
