@@ -35,6 +35,7 @@ app.use(express.static("public"));
 
 const corsOptions = {
   origin: 'https://rickyalatorre.github.io',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -198,7 +199,7 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
-app.get('/dontSleep', (req, res) => {
+app.get('/dontSleep', cors(corsOptions), (req, res) => {
   // Create a new Date object, which represents the current date and time
 const currentDate = new Date();
 // Get the date components
