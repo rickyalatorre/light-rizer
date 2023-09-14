@@ -38,7 +38,7 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
@@ -199,7 +199,7 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
-app.get('/dontSleep', cors(corsOptions), function (req, res){
+app.get('/dontSleep', function (req, res){
   // Create a new Date object, which represents the current date and time
 const currentDate = new Date();
 // Get the date components
