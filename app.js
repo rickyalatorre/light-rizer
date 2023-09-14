@@ -38,7 +38,7 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
