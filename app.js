@@ -199,7 +199,7 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
-app.get('/dontSleep', cors(corsOptions), (req, res) => {
+app.get('/dontSleep', cors(corsOptions), function (req, res){
   // Create a new Date object, which represents the current date and time
 const currentDate = new Date();
 // Get the date components
