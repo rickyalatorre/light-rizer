@@ -34,7 +34,7 @@ const uid = require('uuid');
 app.use(express.static("public"));
 
 const corsOptions = {
-  origin: 'https://rickyalatorre.github.io/',
+  origin: 'https://rickyalatorre.github.io',
 };
 
 app.use(cors(corsOptions));
