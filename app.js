@@ -3,8 +3,14 @@ require("dotenv").config();
 
 const express = require("express");
 require('./passport');
-const cors=require('cors');
+
 const app = express();
+
+const http = require('http');
+
+setInterval(() => {
+  http.get("https://light-rizer-be68c0f003b3.herokuapp.com");
+}, 25 * 60 * 1000); // every 25 minutes
 
 const bodyParser = require('body-parser');
 
@@ -32,13 +38,6 @@ app.use(express.json());
 const uid = require('uuid');
 
 app.use(express.static("public"));
-
-const corsOptions = {
-  origin: 'https://rickyalatorre.github.io',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-
-app.use(cors(corsOptions));
 
 const JWT = require('jsonwebtoken');
 //telling our server that we want to be able to access forms in html pages inside our request.
@@ -199,35 +198,6 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
-app.get('/dontSleep', function (req, res){
-  // Create a new Date object, which represents the current date and time
-const currentDate = new Date();
-// Get the date components
-const year = currentDate.getFullYear();
-const month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
-const day = currentDate.getDate();
-
-// Specify the options for formatting and the timezone
-const options = {
-  timeZone: 'America/Los_Angeles', // Los Angeles timezone
-  hour12: true, // 12-hour format (true) or 24-hour format (false)
-  hour: '2-digit', // Display the hour as two digits
-  minute: '2-digit', // Display the minute as two digits
-  second: '2-digit', // Display the second as two digits
-};
-
-// Format the date as a string in Los Angeles timezone
-const losAngelesTime = date.toLocaleTimeString('en-US', options);
-
-  // Define a JSON object to be returned
-  const jsonData = {
-    message: 'Hey dont fall asleep!',
-    date: `Current Date: ${year}-${month}-${day}`,
-    time: losAngelesTime
-  };
-  // Use res.json() to send the JSON response
-  res.json(jsonData);
-});
 
 //If phone !=='' then have /profile route render activated
 app.post('/settings-submit', passport.authenticate('jwt', {
