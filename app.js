@@ -198,7 +198,7 @@ app.get('/settings',passport.authenticate('jwt', {
   });
 });
 
-app.get('/dontSleep/8277', (req, res) => {
+app.get('/dontSleep', (req, res) => {
   // Create a new Date object, which represents the current date and time
 const currentDate = new Date();
 // Get the date components
