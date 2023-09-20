@@ -8,9 +8,9 @@ const app = express();
 
 const http = require('http');
 
-setInterval(() => {
-  http.get("https://light-rizer-be68c0f003b3.herokuapp.com");
-}, 25 * 60 * 1000); // every 25 minutes
+// setInterval(() => {
+//   http.get("https://light-rizer-be68c0f003b3.herokuapp.com");
+// }, 25 * 60 * 1000); // every 25 minutes
 
 const bodyParser = require('body-parser');
 
