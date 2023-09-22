@@ -73,19 +73,40 @@ let phoneActivation='Messages Unactivated';
 
 // If authenticated then we will remove login and register button from bottom of the page.
 // Will convert navabar into authenticated navbar
-app.get("/", function(req, res) {
+// app.get("/", function(req, res) {
+// console.log('is this where the problem is:',authenticated);
+//   if (authenticated) {
+//     res.render('index', {
+//       message: true,
+//       username:userName
+//     })
+//   } else {
+//     res.render('index', {
+//       message: false,
+//       username:''
+//     })
+//   }
+// });
 
-  if (authenticated) {
-    res.render('index', {
-      message: true,
-      username:userName
-    })
-  } else {
-    res.render('index', {
-      message: false,
-      username:''
-    })
-  }
+
+app.get("/", function(req, res) {
+  passport.authenticate('jwt', { session: false, failureRedirect: '/login-page' }, function(err, user, info) {
+
+    console.log('err:',err);
+    console.log('user:',user);
+    console.log('info:',info);
+    if (user) {
+      res.render('index', {
+        message: true,
+        username:userName
+      })
+    } else {
+      res.render('index', {
+        message: false,
+        username:''
+      })
+    }
+})(req,res,next);
 });
 
 // Will return to /profile if manually typed in when authenticated.
