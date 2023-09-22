@@ -91,10 +91,8 @@ let phoneActivation='Messages Unactivated';
 
 app.get("/", function(req, res) {
   passport.authenticate('jwt', { session: false, failureRedirect: '/login-page' }, function(err, user, info) {
-
     console.log('err:',err);
     console.log('user:',user);
-    console.log('info:',info);
     if (user) {
       res.render('index', {
         message: true,
@@ -106,7 +104,7 @@ app.get("/", function(req, res) {
         username:''
       })
     }
-})(req,res,next);
+})(req,res);
 });
 
 // Will return to /profile if manually typed in when authenticated.
