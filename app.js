@@ -64,10 +64,10 @@ const signToken = (userID) => {
   }, process.env.SECRET_KEY, {})
 };
 
-let authenticated = false;
+// let authenticated = false; **** commented this out because we used passport instead
 
 //user to display on navbar
-let userName;
+// let userName; **** commented this out because we used passport instead
 
 let phoneActivation='Messages Unactivated';
 
@@ -96,7 +96,7 @@ app.get("/", function(req, res) {
     if (user) {
       res.render('index', {
         message: true,
-        username:userName
+        username:user[0].username
       })
     } else {
       res.render('index', {
@@ -109,32 +109,37 @@ app.get("/", function(req, res) {
 
 // Will return to /profile if manually typed in when authenticated.
 app.get('/register-page', function(req, res) {
-  if (authenticated) {
-    res.redirect('/profile');
-  } else {
-    res.render('register', {
-      message: false,
-      taken:'',
-      username:''
-    });
-  }
+  passport.authenticate('jwt', { session: false }, function(err, user, info) {
+    if (user) {
+      res.redirect('/profile');
+    } else {
+      res.render('register', {
+        message: false,
+        taken:'',
+        username:''
+      });
+    }
+  })(req,res);
 });
 
 // Will return to /profile if manually typed in when authenticated.
 app.get('/login-page', function(req, res) {
 
-  if (authenticated) {
-    res.redirect('/profile')
-  }
-  else {
-    res.render('login', {
-      message: false,
-      username:'',
-      messageFailure:''
-    });
-  }
+  passport.authenticate('jwt', { session: false }, function(err, user, info) {
+    if (user) {
+      res.redirect('/profile')
+    }
+    else {
+      res.render('login', {
+        message: false,
+        username:'',
+        messageFailure:''
+      });
+    }
+  })(req,res);
 });
 
+//**************** come back and add logic to check if we are authenticated
 app.post("/register", (req, res) => {
   let {userNameReg, passwordReg} = req.body;
 // This checks our POSTGRESQL if the username exists.
@@ -170,7 +175,7 @@ app.post("/register", (req, res) => {
 
 //Retrieves req.user[0] and req.isAuthenticated from passport local when
 //username and password are correct. Else will direct us back to login-page.
-
+//**************** come back and add logic to check if we are authenticated
 app.post('/login', function(req, res, next) {
   passport.authenticate('local', { session: false }, function(err, user, info) {
     if (err) {
@@ -194,7 +199,7 @@ if(user){
   const userPassword=user[0].password;
   const userUserUid=user[0].user_uid;
 
-      authenticated = true;
+      // authenticated = true; **** commented this out because we used passport instead
       userName=user[0].username;
       let token = signToken(userUserUid);
       res.cookie('access_token', token, {
@@ -213,7 +218,7 @@ app.get('/settings',passport.authenticate('jwt', {
 }), (req, res) => {
   res.render('settings', {
     message: true,
-    username:userName
+    username:req.user[0].username
   });
 });
 
@@ -274,7 +279,7 @@ app.get("/logout", passport.authenticate('jwt', {
   session: false
 }), (req, res) => {
   res.clearCookie('access_token');
-  authenticated = false;
+  // authenticated = false; **** commented this out because we used passport jwt instead
   res.status(200).redirect('/');
 });
 
@@ -293,7 +298,7 @@ app.get('/profile', passport.authenticate('jwt', {
       areaCode: req.user[0].areacode,
       sunriseMessage: `<span>The sun will rise at <span class="unbreak">${req.user[0].time}</span> in <span class="unbreak">${req.user[0].city}</span></span>`,
       message: true,
-      username:userName
+      username:req.user[0].username
     });
   } else {
     res.render('profile', {
@@ -303,7 +308,7 @@ app.get('/profile', passport.authenticate('jwt', {
       areaCode: req.user[0].areacode,
       sunriseMessage: '<a href="/settings">Click here to set up your phone number and zip code</a>',
       message: true,
-      username:userName
+      username:req.user[0].username
     });
   }
 
