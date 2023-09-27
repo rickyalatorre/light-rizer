@@ -69,7 +69,7 @@ const signToken = (userID) => {
 //user to display on navbar
 // let userName; **** commented this out because we used passport instead
 
-let phoneActivation='Messages Unactivated';
+let phoneActivation='Messages Unactivated 1';
 
 // If authenticated then we will remove login and register button from bottom of the page.
 // Will convert navabar into authenticated navbar
@@ -233,7 +233,7 @@ app.post('/settings-submit', passport.authenticate('jwt', {
 // Turn collect all 3 phone number inputs and combine them
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
   if(phone!==''){
-    phoneActivation='Messages Activated';
+    let phoneActivation='Messages Activated 2';
   }
 
 //day submitted
@@ -292,7 +292,7 @@ app.get('/profile', passport.authenticate('jwt', {
 // Else profile will have a message directing us to settings to set up phone number and zip code to activate messages
   if (req.user[0].phone != '' && req.user[0].areaCode != '') {
     res.render('profile', {
-      messagesActivated:phoneActivation,
+      messagesActivated:phoneActivation+' 3',
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
@@ -302,7 +302,7 @@ app.get('/profile', passport.authenticate('jwt', {
     });
   } else {
     res.render('profile', {
-      messagesActivated:phoneActivation,
+      messagesActivated:phoneActivation+' 4',
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
@@ -319,7 +319,7 @@ app.post('/clear-phone',passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res)=>{
-  phoneActivation='Messages Unactivated';
+  phoneActivation='Messages Unactivated 5';
 clearInterval(timerInterval);
 res.redirect('/profile');
 });
