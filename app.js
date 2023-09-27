@@ -233,7 +233,7 @@ app.post('/settings-submit', passport.authenticate('jwt', {
 // Turn collect all 3 phone number inputs and combine them
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
   if(phone!==''){
-    let phoneActivation='Messages Activated 2';
+    phoneActivation='Messages Activated 2';
   }
 
 //day submitted
