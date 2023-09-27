@@ -69,8 +69,6 @@ const signToken = (userID) => {
 //user to display on navbar
 // let userName; **** commented this out because we used passport instead
 
-let phoneActivation='Messages Unactivated 1';
-
 // If authenticated then we will remove login and register button from bottom of the page.
 // Will convert navabar into authenticated navbar
 // app.get("/", function(req, res) {
@@ -232,10 +230,6 @@ app.post('/settings-submit', passport.authenticate('jwt', {
   const {areaCode,phoneAreaCode,phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
 // Turn collect all 3 phone number inputs and combine them
   let phone=phoneAreaCode+phoneMiddleNumbers+phoneLastNumbers;
-  if(phone!==''){
-    phoneActivation='Messages Activated 2';
-  }
-
 //day submitted
 let today= new Date();
 //in 2 in2Days
@@ -260,8 +254,8 @@ twoDaysLater.setDate(today.getDate() + 2);
       dayOfSubmit: today.toDateString(),
     };
 // Updating zip code and phone number and or activating messages
-    db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5 WHERE user_uid= $3', [
-      areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime()
+    db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5,activation=$6 WHERE user_uid= $3', [
+      areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime(),'Messaged Activated'
     ]).then((d) => {
       timeInterval(dataObj);
       res.redirect('/profile');
@@ -292,7 +286,7 @@ app.get('/profile', passport.authenticate('jwt', {
 // Else profile will have a message directing us to settings to set up phone number and zip code to activate messages
   if (req.user[0].phone != '' && req.user[0].areaCode != '') {
     res.render('profile', {
-      messagesActivated:phoneActivation+' 3',
+      messagesActivated:req.user[0].activation,
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
@@ -302,7 +296,7 @@ app.get('/profile', passport.authenticate('jwt', {
     });
   } else {
     res.render('profile', {
-      messagesActivated:phoneActivation+' 4',
+      messagesActivated:req.user[0].activation,
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
@@ -319,9 +313,15 @@ app.post('/clear-phone',passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res)=>{
-  phoneActivation='Messages Unactivated 5';
-clearInterval(timerInterval);
-res.redirect('/profile');
+  // phoneActivation='Messages Unactivated';
+  db.any('Update users SET activation=$1 WHERE user_uid= $2', [
+    'Messaged Unactivated',req.user[0].user_uid
+  ]).then((d)=>{
+    clearInterval(timerInterval);
+    res.redirect('/profile');
+  }).catch((err) => {
+    console.log(err);
+  });
 });
 
 app.use(passport.initialize());
