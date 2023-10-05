@@ -334,6 +334,7 @@ let catcher;
 function time(dataObj){ //runs every second.
 
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
+console.log('nodeTime: ',nodeTime);
 // When current time equals to 30 min before sunrise call weather api again to get
 // any new time the sun will rise
 if(new Date().toDateString() == dataObj.in2Days){
