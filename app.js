@@ -54,6 +54,8 @@ const authToken= process.env.AUTH_TOKEN;
 
 const client = require('twilio')(accountSid, authToken);
 
+setInterval(()=>console.log('tick'),1000);
+
 //jwt will be made with secret_key. Our server checks that secret_key is still
 //inside jwt to make sure no one tampered with it.
 const signToken = (userID) => {
@@ -64,28 +66,8 @@ const signToken = (userID) => {
   }, process.env.SECRET_KEY, {})
 };
 
-// let authenticated = false; **** commented this out because we used passport instead
-
-//user to display on navbar
-// let userName; **** commented this out because we used passport instead
-
-// If authenticated then we will remove login and register button from bottom of the page.
-// Will convert navabar into authenticated navbar
-// app.get("/", function(req, res) {
-// console.log('is this where the problem is:',authenticated);
-//   if (authenticated) {
-//     res.render('index', {
-//       message: true,
-//       username:userName
-//     })
-//   } else {
-//     res.render('index', {
-//       message: false,
-//       username:''
-//     })
-//   }
-// });
-
+// if we restart create an interval here or run our already created interval
+setInterval(console.log.bind(console, 'tick'), 1000);
 
 app.get("/", function(req, res) {
   passport.authenticate('jwt', { session: false, failureRedirect: '/login-page' }, function(err, user, info) {
