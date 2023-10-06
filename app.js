@@ -54,7 +54,8 @@ const authToken= process.env.AUTH_TOKEN;
 
 const client = require('twilio')(accountSid, authToken);
 
-setInterval(()=>console.log('tick'),1000);
+//when sigterm starts back up do a check if the user
+// setInterval(()=>console.log('tick'),1000);
 
 //jwt will be made with secret_key. Our server checks that secret_key is still
 //inside jwt to make sure no one tampered with it.
@@ -377,4 +378,5 @@ const currentTime = `${hours}:${minutes}:${seconds}`;
 
 app.listen(PORT, (res, req) => {
   console.log(`app.js is running on port ${PORT}`);
+
 });
