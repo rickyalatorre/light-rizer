@@ -67,9 +67,6 @@ const signToken = (userID) => {
   }, process.env.SECRET_KEY, {})
 };
 
-// if we restart create an interval here or run our already created interval
-// setInterval(console.log.bind(console, 'tick'), 1000);
-
 app.get("/", function(req, res) {
   passport.authenticate('jwt', { session: false, failureRedirect: '/login-page' }, function(err, user, info) {
     console.log('err:',err);
