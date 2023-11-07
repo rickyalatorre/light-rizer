@@ -215,11 +215,19 @@ let today= new Date();
 //in 2 in2Days
 const twoDaysLater = new Date();
 twoDaysLater.setDate(today.getDate() + 2);
-
+let jsonString;
   let phoneUS= `+1${phone}`;
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
+function localTime(sec,location){
+  console.log('localTime:', typeof sec);
+  return new Date(sec*1000).toLocaleTimeString('en-US',{timeZone:`${location}`})
+}
+function minus30(sec,location){
+  console.log('minus30:',typeof sec);
+  return new Date((sec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${location}`})
+}
     let dataObj={
       areaCode:areaCode,
       phone:phoneUS,
@@ -228,14 +236,16 @@ twoDaysLater.setDate(today.getDate() + 2);
       timeZone: data.timezone,
       cityName:data.name,
       sunriseSec:data.sys.sunrise,
-      localSunriseTime: function(){return new Date(this.sunriseSec*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
-      minus30Minutes: function(){return new Date((this.sunriseSec-1800)*1000).toLocaleTimeString('en-US',{timeZone:`${this.location}`})},
+      localSunriseTime: localTime(data.sys.sunrise,location),
+      minus30Minutes: minus30(data.sys.sunrise,location),
       in2Days: twoDaysLater.toDateString(),
       dayOfSubmit: today.toDateString(),
     };
+    jsonString = JSON.stringify(dataObj);
+console.log('jsonString->',jsonString);
 // Updating zip code and phone number and or activating messages
-    db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5,activation=$6 WHERE user_uid= $3', [
-      areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime(),'Messaged Activated'
+    db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5,activation=$6,obj=$7 WHERE user_uid= $3', [
+      areaCode, phoneUS, req.user[0].user_uid,dataObj.cityName,dataObj.localSunriseTime,'Message Activated',jsonString
     ]).then((d) => {
       timeInterval(dataObj);
       res.redirect('/profile');
@@ -295,7 +305,7 @@ app.post('/clear-phone',passport.authenticate('jwt', {
 }), (req, res)=>{
   // phoneActivation='Messages Unactivated';
   db.any('Update users SET activation=$1 WHERE user_uid= $2', [
-    'Messaged Unactivated',req.user[0].user_uid
+    'Message Unactivated',req.user[0].user_uid
   ]).then((d)=>{
     clearInterval(timerInterval);
     res.redirect('/profile');
@@ -323,8 +333,8 @@ if(new Date().toDateString() == dataObj.in2Days){
   clearInterval(timerInterval);
 }
 
-  if(nodeTime == dataObj.minus30Minutes()){
-    console.log(`api was called again at ${dataObj.minus30Minutes()}`);
+  if(nodeTime == dataObj.minus30Minutes){
+    console.log(`api was called again at ${dataObj.minus30Minutes}`);
     //make api call and set new values to sunriseRegular
     fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${dataObj.areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
       return res.json();
@@ -375,5 +385,16 @@ const currentTime = `${hours}:${minutes}:${seconds}`;
 
 app.listen(PORT, (res, req) => {
   console.log(`app.js is running on port ${PORT}`);
+  db.any('SELECT * FROM users WHERE activation = $1', [
+    'Message Activated'
+  ]).then((data)=>{
+  // console.log('data->',data);
+  data.forEach((user)=>{
+    console.log(user.username +' is sent to timeInterval');
+    timeInterval(user.obj);
+  })
 
+  }).catch((err) => {
+    console.log(err);
+  });
 });
