@@ -177,7 +177,6 @@ if(user){
   const userPassword=user[0].password;
   const userUserUid=user[0].user_uid;
 
-      // authenticated = true; **** commented this out because we used passport instead
       userName=user[0].username;
       let token = signToken(userUserUid);
       res.cookie('access_token', token, {
@@ -324,7 +323,7 @@ let catcher;
 function time(dataObj){ //runs every second.
 
 let nodeTime= new Date().toLocaleTimeString('en-US',{timeZone:dataObj.location});
-console.log('nodeTime: ',nodeTime);
+// console.log('nodeTime: ',nodeTime);
 // When current time equals to 30 min before sunrise call weather api again to get
 // any new time the sun will rise
 if(new Date().toDateString() == dataObj.in2Days){
@@ -374,11 +373,14 @@ if(new Date().toDateString() == dataObj.in2Days){
 let timerInterval;
 function timeInterval(dataObj){
   const now = new Date();
-const hours = String(now.getHours()).padStart(2, '0');
-const minutes = String(now.getMinutes()).padStart(2, '0');
-const seconds = String(now.getSeconds()).padStart(2, '0');
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
 
-const currentTime = `${hours}:${minutes}:${seconds}`;
+  hours = hours % 12 || 12; // Convert to 12-hour format
+
+  const currentTime = `${hours}:${minutes}:${seconds} ${ampm}`;
   console.log(`timer started at ${currentTime} on ${dataObj.dayOfSubmit} ....`);
     timerInterval= setInterval(function(){time(dataObj)},1000);
 };
