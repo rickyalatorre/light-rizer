@@ -341,7 +341,7 @@ if(new Date().toDateString() == dataObj.in2Days){
       let dt3 = data.sys.sunrise;
       let date3 = new Date(dt3 * 1000);
       // Catcher will catch the new time and save it.
-      catcher=date3.toLocaleTimeString('en-US',{timeZone:dataObj.location});
+      catcher=date3.toLocaleTimeString('en-US',{timeZone:dataObj.obj.location});
       console.log('new api call time:',catcher);
     })
     .catch(err=>console.log(err));
@@ -372,16 +372,21 @@ if(new Date().toDateString() == dataObj.in2Days){
 // calling clear timer in /clear-phone route
 let timerInterval;
 function timeInterval(dataObj){
-  const now = new Date();
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  // const now = new Date();
+  // let hours = now.getHours();
+  // const minutes = String(now.getMinutes()).padStart(2, '0');
+  // const seconds = String(now.getSeconds()).padStart(2, '0');
+  // const ampm = hours >= 12 ? 'PM' : 'AM';
+  //
+  // hours = hours % 12 || 12; // Convert to 12-hour format
+  //
+  // const currentTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+  // console.log(`timer started at ${currentTime} on ${dataObj.dayOfSubmit} ....`);
 
-  hours = hours % 12 || 12; // Convert to 12-hour format
-
-  const currentTime = `${hours}:${minutes}:${seconds} ${ampm}`;
-  console.log(`timer started at ${currentTime} on ${dataObj.dayOfSubmit} ....`);
+  let date = new Date();
+console.log('dataObj:',dataObj);
+  let timerStart=date.toLocaleTimeString('en-US',{timeZone:dataObj.location});
+  console.log(`timer started at ${timerStart} based on ${dataObj.location} time....`);
     timerInterval= setInterval(function(){time(dataObj)},1000);
 };
 
