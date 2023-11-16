@@ -4,7 +4,16 @@ require("dotenv").config();
 const express = require("express");
 require('./passport');
 
+const session = require('express-session');
+
 const app = express();
+
+app.use(session({
+  secret: process.env.MY_SESSIONS, // Change this to a secure random string
+  resave: false,
+  saveUninitialized: false
+  // Other configuration options can be added as needed
+}));
 
 const http = require('http');
 
@@ -197,6 +206,9 @@ app.get('/settings', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res) => {
+  // here i can add another property to tell us if we have successfully entered a number and zip code
+  // when successful or false we would input from req.session. This would render user interface that will allow us
+  //to enter the otp if true or "" if none.
   res.render('settings', {
     message: true,
     username: req.user[0].username
@@ -225,6 +237,27 @@ app.post('/settings-submit', passport.authenticate('jwt', {
 
   let jsonString;
   let phoneUS = `+1${phone}`;
+// VERIFICATION Message
+fetch('https://textbelt.com/otp/generate', {
+  method: 'post',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    phone: phoneUS,
+    userid: 'myuser@site.com',
+    key: 'example_otp_key',
+  }),
+}).then(response => {
+  return response.json();
+}).then(data => {
+  console.log('otp data',data);
+  if(data){
+    //if data is success we would redirect to settings page with a variable indicating that we can input
+    // the opt number.
+    //on submit-page we do a submission
+  }
+});
+
+
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
@@ -261,8 +294,8 @@ app.post('/settings-submit', passport.authenticate('jwt', {
       jsonString,
       location
     ]).then((d) => {
-      timeInterval(dataObj);
-      res.redirect('/profile');
+      timeInterval(dataObj); ///////////not set our timer interval 
+      res.redirect('/profile'); ///////not redirect to profile
 
     }).catch((err) => {
       console.log(err);
@@ -369,7 +402,11 @@ function time(dataObj) { //runs every second.
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({phone: phoneNumber, message: 'Go out and get some sun!', key: textbeltApi})
+      body: JSON.stringify({
+        phone: phoneNumber,
+        message: 'Go out and get some sun!',
+        key: textbeltApi
+      })
     }).then(response => {
       return response.json();
     }).then(data => {
