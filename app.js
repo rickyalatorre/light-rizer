@@ -267,7 +267,7 @@ fetch('https://textbelt.com/otp/generate', {
   body: JSON.stringify({
     phone: phone,
     userid: req.user[0].user_uid,
-    key: 'example_otp_key' //'example_otp_key' //process.env.TEXTBELT_API //
+    key: process.env.TEXTBELT_API //'example_otp_key' //process.env.TEXTBELT_API //
   }),
 }).then(response=> response.json())
   .then(data=>{
