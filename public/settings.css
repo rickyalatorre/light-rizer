@@ -1,24 +1,33 @@
 html.sr .load-hidden {
     visibility: hidden;
 }
-.stopMessages-p{
+/* .stopMessages-p{
   font-size: 20px;
   padding:15px;
   margin:0;
   text-align: center;
   color:#205E61;
-}
+} */
 .stopMessages-submit{
   display: block;
   border:0.1px solid #205E61;
   margin:0 auto;
   border-radius: 10px;
-  background-color:white;
-  font-size: 30px;
+    font-size: 30px;
+    background-color: #205E61;
+    color: #F9F54B;
+}
+.stopMessages-submit:hover{
+  background-color:#2b6163;
+  color:#faf893;
+}
+.stopMessages-submit:active{
+  background-color:#F9F54B;
   color:#205E61;
 }
 .stopMessages{
   background-color:#F9F54B;
+  padding-bottom: 50px;
 }
 .phoneInput{
   height:30px;
@@ -49,7 +58,7 @@ html.sr .load-hidden {
   margin: auto;
 }
 
-.bubble-bottom-right::before {
+.bubble-quote-triangle::before {
   content: "";
   position: absolute;
   right: 30px;
@@ -58,6 +67,17 @@ html.sr .load-hidden {
   border-left: 35px solid transparent;
   border-bottom: 35px solid transparent;
   border-right: 35px solid #8BF5FA;
+}
+
+.bubble-quote-triangle-red::before {
+  content: "";
+  position: absolute;
+  right: 30px;
+  bottom: -45px;
+  border-top: 35px solid #d46a6a;
+  border-left: 35px solid transparent;
+  border-bottom: 35px solid transparent;
+  border-right: 35px solid #d46a6a;
 }
 
 .settings-p {
@@ -70,6 +90,21 @@ html.sr .load-hidden {
 
   font-size: 30px;
   /* font-weight: bold; */
+}
+.otpError{
+  background-color: #f5dada;
+}
+
+.bubble-input-container{
+  display: flex;
+ flex-wrap: nowrap;
+ justify-content: space-between;
+  width:100%;
+  /* background-color: pink; */
+  padding: 40px 0 40px 0;
+}
+.phoneAndBubble{
+  width: 50%;
 }
 @media only screen and (max-width: 600px) {
   .settings-img {
@@ -95,12 +130,23 @@ html.sr .load-hidden {
   .phone-input{
     font-size: 15px;
   }
+  .bubble-input-container{
+    display: flex;
+   flex-wrap: wrap;
+ }
+ .phoneAndBubble{
+   width: 100%;
+   padding: 50px 20px 0 20px;
+ }
+ .bubble {
+   padding: 30px 0 30px 0;
+ }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
   @media only screen and (min-width: 600px) {
   .phoneMiddleNumbers{
-    width:35px;
+    /* width:35px; */
     width:20%;
   }
   .phoneLastNumbers{
@@ -109,10 +155,12 @@ html.sr .load-hidden {
   .phone-inputs-holder{
     display: flex;
     width:100%;
+    padding-left: 20px;
   }
    .phone-input{
     font-size: 15px;
   }
+
  }
 
 /* Medium devices (landscape tablets, 768px and up) */
@@ -123,6 +171,7 @@ html.sr .load-hidden {
   .phoneLastNumbers{
     width:30%
   }
+
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
@@ -131,9 +180,9 @@ html.sr .load-hidden {
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   .phoneMiddleNumbers{
-    width:15%;
+    width:20%;
   }
   .phoneLastNumbers{
-    width:20%
+    width:25%
   }
 }

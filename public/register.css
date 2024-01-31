@@ -11,6 +11,7 @@ h1{
   display: flex;
   flex-wrap: wrap;
   padding-top:40px;
+  padding-bottom:40px;
 }
 
 .reg-form-container{
@@ -26,7 +27,7 @@ height:inherit;
 }
 .regin-container{
   padding:10px;
-  width:70%;
+  width:90%;
   margin:0 auto;
   position:relative;
 }

@@ -176,6 +176,18 @@ li{
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 836px) {
+  .register-section{
+    .register-section{
+      display: flex;
+      flex-wrap: nowrap;
+      padding-top:40px;
+      padding-bottom:40px;
+    }
+  }
+  .bubble{
+    width: 200px;
+    height: 100px;
+  }
   /* body {
     padding: 50px 50px 0 50px;
     margin: 0;

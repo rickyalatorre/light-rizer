@@ -61,8 +61,6 @@ const accountSid = process.env.ACCOUNT_SID;
 
 const authToken = process.env.AUTH_TOKEN;
 
-const client = require('twilio')(accountSid, authToken);
-
 //when sigterm starts back up do a check if the user
 // setInterval(()=>console.log('tick'),1000);
 
@@ -206,17 +204,54 @@ app.get('/settings', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res) => {
-  // here i can add another property to tell us if we have successfully entered a number and zip code
-  // when successful or false we would input from req.session. This would render user interface that will allow us
-  //to enter the otp if true or "" if none.
-  res.render('settings', {
-    message: true,
-    username: req.user[0].username
-  });
+
+// //pull up data of phone,verified and otp and insert them in session
+// db.any('SELECT phone, verified, otp FROM users WHERE user_uid=$1', [req.user[0].user_uid])
+// .then((data) => {
+// console.log('3 data from /settings i need',data);
+//
+//   let verified=data[0].verified;
+//   // req.session.verified=verified;
+//   console.log('/settings-> verified:',verified);
+//
+//   let phone=data[0].phone;
+//   // req.session.phone=phone;
+//   console.log('/settings-> phone:',phone);
+//
+//   // let opt=re.user[0].otp;
+//   // console.log('/settings-> otp: ',otp);
+//
+//   res.render('settings', {
+//     message: true,
+//     username: req.user[0].username,
+//     phone: phone,
+//     verified: verified,
+//   });
+//
+// }).catch((err) => {
+//   console.log(err);
+// });
+let wrongOtp=req.query.data;
+console.log('In /setting correctOtp: ',wrongOtp);
+let verified=req.user[0].verified;
+console.log('verified from /settings:',verified);
+
+let phone=req.user[0].phone;
+console.log('phone from /settings',phone);
+
+let zipCode=req.user[0].areacode;
+
+res.render('settings', {
+  message: true,
+  username: req.user[0].username,
+  phone: phone,
+  verified: verified,
+  wrongOtp:wrongOtp,
+  zipCode: zipCode
+});
 });
 
-//If phone !=='' then have /profile route render activated
-app.post('/settings-submit', passport.authenticate('jwt', {
+app.post('/settings-phone', passport.authenticate('jwt', {
   failureRedirect: '/login-page',
   session: false
 }), (req, res) => {
@@ -224,6 +259,67 @@ app.post('/settings-submit', passport.authenticate('jwt', {
   const {areaCode, phoneAreaCode, phoneMiddleNumbers, phoneLastNumbers, location} = req.body;
   // Turn collect all 3 phone number inputs and combine them
   let phone = phoneAreaCode + phoneMiddleNumbers + phoneLastNumbers;
+
+console.log('req.user[0].user_uid:',req.user[0].user_uid);
+fetch('https://textbelt.com/otp/generate', {
+  method: 'post',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    phone: phone,
+    userid: req.user[0].user_uid,
+    key: 'example_otp_key' //'example_otp_key' //process.env.TEXTBELT_API //
+  }),
+}).then(response=> response.json())
+  .then(data=>{
+    console.log('Otp verification data:',data)
+    if(data.otp){
+      db.none('Update users SET otp=$1, phone=$2 WHERE user_uid=$3', [data.otp,phone,req.user[0].user_uid])
+      .then((data)=>{
+      console.log('data from saving opt in database:',data);
+      res.redirect('/settings');
+      })
+      .catch((err)=>{console.log(err)});
+      // req.session.otp=data.otp
+      // req.session.phone=phone;
+      // console.log('logging sessions.phone in /settings-phone :',req.session.phone)
+
+    }
+  })
+  .catch(err=>console.log('Otp verification error:',err));
+
+});
+
+app.post('/settings-otp', passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res) => {
+  let wrongOtp=false;
+  let {otp}=req.body
+  let verifiedOtp=req.user[0].otp;
+  if(otp == verifiedOtp){
+    db.any('Update users SET verified=$1 WHERE user_uid=$2', [true,req.user[0].user_uid])
+    .then((data)=>{
+    console.log('data from saving verified in database:',data);
+    })
+    .catch((err)=>{console.log(err)});
+  }
+  else{
+    console.log('In /settings-otp we get back false. Opt entered does not match database Otp')
+    wrongOtp=true;
+  }
+  res.redirect(`/settings?data=${encodeURIComponent(wrongOtp)}`);
+})
+
+//If phone !=='' then have /profile route render activated
+app.post('/settings-submit', passport.authenticate('jwt', {
+  failureRedirect: '/login-page',
+  session: false
+}), (req, res) => {
+// let phone= req.session.phone;
+// console.log('phone in settings-submit:',phone);
+  const {location,areaCode} = req.body;
+  // // Turn collect all 3 phone number inputs and combine them
+  // let phone = phoneAreaCode + phoneMiddleNumbers + phoneLastNumbers;
 
   // Get the current date in the specified time zone
   const today = new Date(new Date().toLocaleDateString('en-US', {timeZone: location}));
@@ -236,31 +332,11 @@ app.post('/settings-submit', passport.authenticate('jwt', {
   const futureDate = twoDaysLater.toLocaleDateString('en-US', {timeZone: location});
 
   let jsonString;
-  let phoneUS = `+1${phone}`;
-// VERIFICATION Message
-fetch('https://textbelt.com/otp/generate', {
-  method: 'post',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    phone: phoneUS,
-    userid: 'myuser@site.com',
-    key: 'example_otp_key',
-  }),
-}).then(response => {
-  return response.json();
-}).then(data => {
-  console.log('otp data',data);
-  if(data){
-    //if data is success we would redirect to settings page with a variable indicating that we can input
-    // the opt number.
-    //on submit-page we do a submission
-  }
-});
-
-
+  let phoneUS = `+1${req.user[0].phone}`;
   fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${areaCode}&appid=e0da5a6ab2277de52533c75912e29264`).then((res) => {
     return res.json();
   }).then((data) => {
+
     function localTime(sec, location) {
       console.log('localTime:', typeof sec);
       return new Date(sec * 1000).toLocaleTimeString('en-US', {timeZone: `${location}`})
@@ -284,7 +360,6 @@ fetch('https://textbelt.com/otp/generate', {
     };
     console.log('dataObj:', dataObj);
     jsonString = JSON.stringify(dataObj);
-    console.log('jsonString->', jsonString);
     // Updating zip code and phone number and or activating messages
     db.any('Update users SET areaCode = $1, phone = $2,city=$4,time=$5,activation=$6,obj=$7, location=$8 WHERE user_uid= $3', [
       areaCode, phoneUS, req.user[0].user_uid,
@@ -294,7 +369,12 @@ fetch('https://textbelt.com/otp/generate', {
       jsonString,
       location
     ]).then((d) => {
-      timeInterval(dataObj); ///////////not set our timer interval 
+      /// Instead of calling timer or redirect we would create an object to save
+      //inside sessions
+
+      // then redirect to /settings
+
+      timeInterval(dataObj); ///////////not set our timer interval
       res.redirect('/profile'); ///////not redirect to profile
 
     }).catch((err) => {
@@ -336,7 +416,7 @@ app.get('/profile', passport.authenticate('jwt', {
       name: req.user[0].username,
       phone: req.user[0].phone,
       areaCode: req.user[0].areacode,
-      sunriseMessage: '<a href="/settings">Click here to set up your phone number and zip code</a>',
+      sunriseMessage: ' <a class="setUpMessages" href="/settings">  Set up text messages </a><i class="fa-solid fa-plane"></i> ',
       message: true,
       username: req.user[0].username
     });
@@ -350,14 +430,18 @@ app.post('/clear-phone', passport.authenticate('jwt', {
   session: false
 }), (req, res) => {
   // phoneActivation='Messages Unactivated';
-  db.any('Update users SET activation=$1 WHERE user_uid= $2', [
-    'Message Unactivated', req.user[0].user_uid
+  db.any('Update users SET activation=$1,phone=$2,areacode=$3,verified=$4,otp=$5 WHERE user_uid= $6', [
+    'Message Unactivated','','',false,'',req.user[0].user_uid
   ]).then((d) => {
+    // req.session.phone='';
+    // req.session.verified=false;
     clearInterval(timerInterval);
     res.redirect('/profile');
   }).catch((err) => {
     console.log(err);
   });
+
+
 });
 
 app.use(passport.initialize());
@@ -432,7 +516,7 @@ function timeInterval(dataObj) {
 app.listen(PORT, (res, req) => {
   console.log(`app.js is running on port ${PORT}`);
   db.any('SELECT * FROM users WHERE activation = $1', ['Message Activated']).then((data) => {
-    // console.log('data->',data);
+    console.log('data from app.listen->',data);
     data.forEach((user) => {
       console.log(user.username + ' is sent to timeInterval');
       timeInterval(user.obj);

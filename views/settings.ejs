@@ -1,18 +1,28 @@
 <%- include('./partials/header'); %>
 
-<section class='register-section section-padding'>
+<section class='bubble-input-container'>
   <%# <img class='login-img' src="https://i.pinimg.com/originals/91/e7/2f/91e72f56e9dab16bd62a21a7c6b01d84.png" alt=""> %>
-  <div class='register-img  bubble-space' style='opacity:1;'>
-    <div class='bubble load-hidden bubble-bottom-right'>
-      <p class="settings-p">The sun is rising! Go get some sun! :)</p>
+
+  <%if(phone && verified && zipCode){%>
+
+  <%}else if(phone && verified){%>
+    <div class='bubble load-hidden bubble-quote-triangle'>
+      <p class="settings-p"><i class="fa-solid fa-location-dot"></i> Enter your zip code!</p>
     </div>
-  </div>
   <form id='myForm' class='reg-form-container' action="/settings-submit" method="post">
     <div class='regin-container'>
       <label class='reg-label' for="areaCode">Zip Code</label>
       <input class='register-input' type="tel" name="areaCode" value="" pattern="[0-9]{5}" placeholder="i.e 90001" required>
     </div>
-    <div class='regin-container'>
+    <input class='client-timezone' name='location' type="text" value="" hidden>
+    <input class='reg-submit' type="submit" name="" value="submit">
+  </form>
+<%}else if(!phone && !verified){%>
+    <div class='bubble load-hidden bubble-quote-triangle'>
+      <p class="settings-p"><i class="fa-solid fa-phone"></i> Enter your phone number!</p>
+    </div>
+  <form class='phoneAndBubble' action='/settings-phone' method="post">
+    <div >
       <label class='reg-label' for="areaCode">Phone Number</label>
       <div class="phone-inputs-holder">
         <span class="span-settings">(</span>
@@ -23,18 +33,35 @@
         <input class='thirdInput phoneInput phoneLastNumbers' type="tel" maxlength="4" name="phoneLastNumbers" pattern="[0-9]{4}" value="" placeholder="xxxx" required>
       </div>
     </div>
-    <input class='client-timezone' name='location' type="text" value="" hidden>
+    <input class='reg-submit' type="submit" name="" value="submit">
+    </form>
+<%}else if(phone && !verified){ %>
+  <%if(!wrongOtp){%>
+    <div class='bubble load-hidden bubble-quote-triangle'>
+      <p class="settings-p"><i class="fa-solid fa-key"></i> Verify with code sent to you!</p>
+    </div>
+<form class='phoneAndBubble' action='/settings-otp' method="post">
+  <input class='register-input' type="text" name="otp" value="">
+  <input class='reg-submit' type="submit" name="" value="submit">
+</form>
+<%}else if(wrongOtp){%>
+  <div style="background-color: #d46a6a;" class='bubble load-hidden bubble-quote-triangle-red'>
+    <p style='color:#f5dada;' class="settings-p"><i class="fa-solid fa-circle-exclamation"></i> Invalid Code Try Again!</p>
+  </div>
+  <form class='phoneAndBubble' action='/settings-otp' method="post">
+    <input style='background-color: #f5dada;' class=' register-input' type="text" name="otp" value="">
     <input class='reg-submit' type="submit" name="" value="submit">
   </form>
+<%}%>
+<%}%>
+
 </section>
 
 <section class='stopMessagesWave-container'>
 <svg id="wave" style="display: block;transform:rotate(0deg); transition: 0.3s" viewBox="0 0 1440 300" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(249, 245, 75, 1)" offset="0%"></stop><stop stop-color="rgba(249, 245, 75, 1)" offset="100%"></stop></linearGradient></defs><path style="transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,210L480,30L960,120L1440,60L1920,30L2400,0L2880,150L3360,150L3840,0L4320,60L4800,270L5280,180L5760,30L6240,270L6720,210L7200,270L7680,0L8160,210L8640,240L9120,120L9600,210L10080,0L10560,60L11040,120L11520,270L11520,300L11040,300L10560,300L10080,300L9600,300L9120,300L8640,300L8160,300L7680,300L7200,300L6720,300L6240,300L5760,300L5280,300L4800,300L4320,300L3840,300L3360,300L2880,300L2400,300L1920,300L1440,300L960,300L480,300L0,300Z"></path></svg>  <div class='stopMessages'>
-    <h3 class='stopMessages-p'>To stop messages, click on Stop Messages button</h3>
     <form action="/clear-phone" method="post">
       <input class='stopMessages-submit' type='submit' value="Stop Messages" />
     </form>
-    <h3 class='stopMessages-p'>To re-activate messages, just re-enter zip code and phone number.</h3>
   </div>
 <svg id="wave" style="display:block;transform:rotate(180deg); transition: 0.3s" viewBox="0 0 1440 170" version="1.1" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sw-gradient-0" x1="0" x2="0" y1="1" y2="0"><stop stop-color="rgba(249, 245, 75, 1)" offset="0%"></stop><stop stop-color="rgba(249, 245, 75, 1)" offset="100%"></stop></linearGradient></defs><path style="display:block;transform:translate(0, 0px); opacity:1" fill="url(#sw-gradient-0)" d="M0,102L480,136L960,34L1440,68L1920,153L2400,85L2880,68L3360,119L3840,102L4320,102L4800,136L5280,102L5760,85L6240,68L6720,136L7200,17L7680,102L8160,17L8640,119L9120,102L9600,136L10080,17L10560,119L11040,136L11520,102L11520,170L11040,170L10560,170L10080,170L9600,170L9120,170L8640,170L8160,170L7680,170L7200,170L6720,170L6240,170L5760,170L5280,170L4800,170L4320,170L3840,170L3360,170L2880,170L2400,170L1920,170L1440,170L960,170L480,170L0,170Z"></path></svg>
 </section>
