@@ -1,5 +1,8 @@
 //to be able to use env file for secrets we need dotenv here.
-require("dotenv").config();
+// require("dotenv").config();
+
+const test = require('dotenv').config()
+console.log(test)
 
 const express = require("express");
 require('./passport');
@@ -267,7 +270,7 @@ fetch('https://textbelt.com/otp/generate', {
   body: JSON.stringify({
     phone: phone,
     userid: req.user[0].user_uid,
-    key: process.env.TEXTBELT_API //'example_otp_key' //process.env.TEXTBELT_API //
+    key: textbeltApi //'example_otp_key' //process.env.TEXTBELT_API //
   }),
 }).then(response=> response.json())
   .then(data=>{
