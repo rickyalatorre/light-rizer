@@ -8,12 +8,12 @@ const session = require('express-session');
 
 const app = express();
 
-app.use(session({
-  secret: process.env.MY_SESSIONS, // Change this to a secure random string
-  resave: false,
-  saveUninitialized: false
-  // Other configuration options can be added as needed
-}));
+// app.use(session({
+//   secret: process.env.MY_SESSIONS, // Change this to a secure random string
+//   resave: false,
+//   saveUninitialized: false
+//   // Other configuration options can be added as needed
+// }));
 
 const http = require('http');
 
