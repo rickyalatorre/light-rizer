@@ -281,17 +281,18 @@ fetch('https://textbelt.com/otp/generate', {
       .catch((err)=>{
         console.log(err)
       });
-      // req.session.otp=data.otp
-      // req.session.phone=phone;
-      // console.log('logging sessions.phone in /settings-phone :',req.session.phone)
-
+    }else{
+      console.log('phone:',phone);
+      console.log('userid:',req.user[0].user_uid);
+      console.log('key:',process.env.TEXTBELT_API);
+      res.redirect('/settings');
     }
   })
   .catch(err=>{
     console.log('Otp verification error:',err)
-    console.log('phone:',phone);
-    console.log('userid:',req.user[0].user_uid);
-    console.log('key:',process.env.TEXTBELT_API);
+    // console.log('phone:',phone);
+    // console.log('userid:',req.user[0].user_uid);
+    // console.log('key:',process.env.TEXTBELT_API);
 
   });
 
