@@ -31,8 +31,6 @@
 }
 .sunriseMessage{
   color:#205E61;
- /* width:80%; */
-
 }
 
 .unbreak{
@@ -101,7 +99,7 @@
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
   .sunriseMessage{
-      font-size: 40px;
+      font-size: 35px;
     width:80%;
   }
 }
