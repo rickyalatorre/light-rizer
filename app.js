@@ -1,8 +1,7 @@
 //to be able to use env file for secrets we need dotenv here.
 // require("dotenv").config();
 
-const test = require('dotenv').config()
-console.log(test)
+require('dotenv').config()
 
 const express = require("express");
 require('./passport');
@@ -466,12 +465,28 @@ let catcher;
 function time(dataObj) { //runs every second.
 
   let nodeTime = new Date().toLocaleTimeString('en-US', {timeZone: dataObj.location});
+  // console.log('can i reuse nodetime?:',nodeTime);
   // console.log('nodeTime: ',nodeTime);
   // When current time equals to 30 min before sunrise call weather api again to get
   // any new time the sun will rise
-  if (new Date().toDateString() == dataObj.in2Days) {
+
+
+////////////////////////////////////////////////////////////
+// let base = new Date().toLocaleTimeString('en-US', {timeZone: dataObj.location});
+
+  let today = new Date();
+  // today.setDate(today.getDate()+1);
+
+  let convertToday = today.toLocaleDateString('en-US', {timeZone: dataObj.location});
+
+// console.log(`${dataObj.in2Days} is when sms should have been stopped. today is ${convertToday}`)
+
+////////////////////////////////////////////////////////////////
+
+
+  if (convertToday == dataObj.in2Days) {
     //clear timerInterval
-    console.log(`Day submitted was ${dataObj.dayOfSubmit}. We clear the interval timer at ${nodeTime} on ${new Date().toDateString()}`);
+    console.log(`Day submitted was ${dataObj.dayOfSubmit}. We clear the interval timer at ${nodeTime} on ${convertToday}`);
     clearInterval(timerInterval);
   }
 
